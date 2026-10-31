@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pageByPath, sections, load } from '../../lib/home';
+import { url } from '../../lib/url';
+import { LABELS } from '../../lib/site';
+import '../../styles/home.css';
+
+const L = LABELS.en;
+const home = await pageByPath('/en/');
+const S = sections(home.html);
+const strip = (h: string) => load(h).root().text().replace(/\s+/g, ' ').trim();
+
+// [0] hero
+const h0 = load(S[0]);
+const heroTitle = h0('h1').first().text().trim();
+const heroTagline = h0('h3').first().html() ?? '';
+const heroArt = h0('img').first().attr('src');
+
+// [1] who we are
+const h1$ = load(S[1]);
+const whoTitle = h1$('h1, h2, h3').first().text().trim();
+const whoBody = h1$('p').toArray().map((p) => h1$(p).text().trim());
+
+// [2] heading, [3]-[6] programs (image + description)
+const whatTitle = strip(S[2]);
+const programLinks = ['/en/grow-together/', '/en/health-clinic/', '/en/running-club/', '/en/ollietree-living/'];
+const programNames = ['OllieTree Youth', 'OllieTree Health', 'OllieTree Community', 'OllieTree Living'];
+const programs = [S[3], S[4], S[5], S[6]].map((s, i) => {
+  const $ = load(s);
+  return { img: $('img').first().attr('src'), body: $('blockquote, p').first().text().replace(/\s+/g, ' ').trim(), href: programLinks[i], name: programNames[i] };
+});
+
+// [7] heading, [8]-[9] news
+const newsTitle = strip(S[7]);
+const news = [S[8], S[9]].map((s) => load(s)('.col').first().html() ?? s);
+
+// [10] sponsors
+const h10 = load(S[10]);
+const sponsorsTitle = h10('h3').first().text().trim();
+const sponsorImgs = h10('img').toArray().map((i) => h10(i).attr('src')!);
+const donateLabel = h10('.btn').first().text().trim();
+---
+<BaseLayout title={heroTitle} lang="en" site="en">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">{L.altName} · Charlotte, NC</span>
+        <h1>{heroTitle}</h1>
+        <p class="hero-tagline" set:html={heroTagline.replace(/^<br>/, '')} />
+        <blockquote class="hero-mission"><span>{whoTitle}</span>{whoBody.join(' ')}</blockquote>
+        <div class="hero-ctas">
+          <a class="button button-accent" href={url(L.givingPath)}><span aria-hidden="true">♥</span> {L.donate}</a>
+          <a class="button button-ghost" href={url('/en/youth-volunteers/')}>Volunteer</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        {heroArt && <img class="art" src={heroArt} alt="" />}
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <div class="section-head"><h2>{whatTitle}</h2></div>
+      <div class="program-grid">
+        {programs.map((p) => (
+          <a class="program-card" href={url(p.href)}>
+            <div class="pic">{p.img && <img src={p.img} alt="" loading="lazy" />}</div>
+            <div class="body">
+              <h3>{p.name}</h3>
+              <p>{p.body}</p>
+              <span class="more">Learn more →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-sand">
+    <div class="container">
+      <div class="section-head">
+        <h2>{newsTitle}</h2>
+        <a class="button button-ghost" href={url(L.eventsPath)}>{L.events}</a>
+      </div>
+      <div class="action-grid">
+        <div id="events-slot"><slot name="events" /></div>
+        <div class="news-stack" style="display:grid;gap:var(--space-5)">
+          {news.map((n) => <aside class="news-card prose" lang="en" set:html={n} />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <div class="section-head" style="justify-content:center;text-align:center"><h2>{sponsorsTitle}</h2></div>
+      <div class="sponsors">
+        {sponsorImgs.map((s) => <img src={s} alt="" loading="lazy" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-dark cta-band">
+    <div class="container">
+      <p>{L.tagline}</p>
+      <div class="actions">
+        <a class="button button-accent" href={url(L.givingPath)}><span aria-hidden="true">♥</span> {donateLabel}</a>
+        <a class="button button-light" href={url('/en/about-us-2/')}>About Us</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

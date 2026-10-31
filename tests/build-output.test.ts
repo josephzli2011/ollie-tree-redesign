@@ -50,6 +50,25 @@ describe('built site', () => {
     for (const p of pages.filter((x: any) => x.hidden)) expect(navHrefs).not.toContain(BASE + p.path);
   });
 
+  it.each([['cn', '/cn/'], ['en', '/en/'], ['root', '/']])('%s homepage keeps every source text block', (site, p) => {
+    const src = pages.find((x: any) => x.site === site && x.path === p);
+    const built = load(p + 'index.html')('main').text().replace(/\s+/g, '');
+    const blocks = cheerio.load(src.html)('h1, h2, h3, h4, h5, h6, p, li, blockquote').toArray()
+      .map((e) => cheerio.load(src.html)(e).text().replace(/\s+/g, ''))
+      .filter((t) => t.length >= 8);
+    const missing = blocks.filter((t) => !built.includes(t));
+    // the en homepage's own contact block repeats the footer, which is outside <main>
+    const allowed = site === 'en' ? missing.filter((t) => !/POBox2422|ollietreefoundation@gmail|Copyright|704-839-9583/i.test(t)) : missing;
+    expect(allowed).toEqual([]);
+  });
+
+  it('root chooser links to both sites', () => {
+    const $ = load('/index.html');
+    const hrefs = $('a').toArray().map((a) => $(a).attr('href'));
+    expect(hrefs).toContain(`${BASE}/cn/`);
+    expect(hrefs).toContain(`${BASE}/en/`);
+  });
+
   it('never references ollietree.org images', () => {
     for (const f of htmlFiles) {
       const $ = load(f);

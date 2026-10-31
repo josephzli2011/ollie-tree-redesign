@@ -1,5 +1,5 @@
 ---
-import { LABELS, ORG, type Site } from '../lib/site';
+import { LABELS, ORG, CONTACT, type Site } from '../lib/site';
 import { url } from '../lib/url';
 import menuCn from '../data/menu.cn.json';
 import menuEn from '../data/menu.en.json';
@@ -26,9 +26,9 @@ const year = new Date().getFullYear();
     <div class="contact">
       <h2>{site === 'en' ? 'Contact' : 'Contact Info 联系方式'}</h2>
       <address>
-        <p>{ORG.address}</p>
-        <p><a href={`tel:${ORG.phone.replace(/\s/g, '')}`}>{ORG.phone}</a></p>
-        <p><a href={`mailto:${ORG.email}`}>{ORG.email}</a></p>
+        <p>{CONTACT[site].address}</p>
+        <p><a href={`tel:${CONTACT[site].phone.replace(/[\s-]/g, '')}`}>{CONTACT[site].phone}</a></p>
+        <p><a href={`mailto:${CONTACT[site].email}`}>{CONTACT[site].email}</a></p>
         <p><a href={ORG.youtube} rel="noopener" target="_blank">YouTube</a></p>
       </address>
     </div>

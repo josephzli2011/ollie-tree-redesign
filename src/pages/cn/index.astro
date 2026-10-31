@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pageByPath, sections, load, text } from '../../lib/home';
+import { url } from '../../lib/url';
+import { LABELS } from '../../lib/site';
+import '../../styles/home.css';
+
+const L = LABELS.cn;
+const home = await pageByPath('/cn/');
+const vision = await pageByPath('/cn/异象和使命/');
+const about = await pageByPath('/cn/关于我们/');
+const clinic = await pageByPath('/cn/freeclinic/');
+const S = sections(home.html);
+
+// [0] hero
+const h0 = load(S[0]);
+const heroTitle = h0('h1').first().html() ?? '';
+const heroTagline = h0('h3').first().text().trim();
+const visionSections = sections(vision.html);
+const visionLabel = text(visionSections[0] ?? '', 'h1, h2, h3');
+const visionText = load(visionSections[1] ?? '').root().text().replace(/\s+/g, ' ').trim();
+
+// [1] "in action": heading + health column; the three posters are replaced by upcoming events
+const h1$ = load(S[1]);
+const actionTitle = h1$('h2').first().text().trim();
+const moreLabel = h1$('.btn').first().text().trim();
+const health = h1$('.row.cols-4 > .col').last().html() ?? '';
+
+// [2], [3] what we do / will do
+const features = [S[2], S[3]];
+
+// [4] strengths + banner
+const h4$ = load(S[4]);
+const strengthsTitle = h4$('h2').first().text().trim();
+const strengths = h4$('.row.cols-3 > .col').toArray().map((c) => ({
+  title: h4$(c).find('h4').last().text().trim(),
+  body: h4$(c).find('p').text().trim(),
+}));
+const bannerRow = h4$('.row.cols-2').last();
+const banner = [bannerRow.find('h2').text().trim(), bannerRow.find('h3').text().trim()];
+
+// [5] recent projects
+const h5$ = load(S[5]);
+const projectsKicker = h5$('h5').first().text().trim();
+const projectsTitle = h5$('h2').first().text().trim();
+const projectsBtn = h5$('.btn').first().text().trim();
+const projectImgs = h5$('img').toArray().map((i) => ({ src: h5$(i).attr('src')!, alt: h5$(i).attr('alt') ?? '' }));
+---
+<BaseLayout title={home.title} lang="zh-CN" site="cn">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">{L.name} · {L.altName}</span>
+        <h1 set:html={heroTitle} />
+        <p class="hero-tagline">{heroTagline}</p>
+        {visionText && <blockquote class="hero-mission"><span>{visionLabel}</span>{visionText}</blockquote>}
+        <div class="hero-ctas">
+          <a class="button button-accent" href={url(L.givingPath)}><span aria-hidden="true">♥</span> {L.donate}</a>
+          <a class="button button-ghost" href={url('/cn/事工项目/')}>事工项目</a>
+        </div>
+      </div>
+      <div class="hero-media" aria-hidden="true">
+        {about.hero && <img class="photo-a" src={url(about.hero)} alt="" />}
+        {clinic.hero && <img class="photo-b" src={url(clinic.hero)} alt="" />}
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <div class="section-head">
+        <h2>{actionTitle}</h2>
+        <a class="button button-ghost" href={url('/cn/事工项目/')}>{moreLabel}</a>
+      </div>
+      <div class="action-grid">
+        <div id="events-slot"><slot name="events" /></div>
+        <aside class="news-card prose" lang="zh-CN" set:html={health} />
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-sand">
+    <div class="container prose features" lang="zh-CN">
+      {features.map((f) => <Fragment set:html={f} />)}
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <h2 class="section-title">{strengthsTitle}</h2>
+      <div class="cards-3">
+        {strengths.map((s, i) => (
+          <article class="value-card">
+            <span class="num">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </article>
+        ))}
+      </div>
+      <div class="banner"><h2>{banner[0]}</h2><h3>{banner[1]}</h3></div>
+    </div>
+  </section>
+
+  <section class="band band-green">
+    <div class="container">
+      <div class="section-head">
+        <div><span class="eyebrow">{projectsKicker}</span><h2>{projectsTitle}</h2></div>
+        <a class="button button-primary" href={url('/cn/事工项目/')}>{projectsBtn}</a>
+      </div>
+      <div class="photo-strip prose">
+        {projectImgs.map((i) => <img src={i.src} alt={i.alt} loading="lazy" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="band band-dark cta-band">
+    <div class="container">
+      <p>{L.tagline}</p>
+      <div class="actions">
+        <a class="button button-accent" href={url(L.givingPath)}><span aria-hidden="true">♥</span> {L.donate}</a>
+        <a class="button button-light" href={url('/cn/联系我们/')}>联系我们</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

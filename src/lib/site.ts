@@ -2,11 +2,14 @@
 export type Site = 'cn' | 'en';
 export type Lang = 'zh-CN' | 'en';
 
+// Contact details as each site's own footer wrote them.
+export const CONTACT = {
+  cn: { address: 'PO Box 2422 Matthews, NC 28106-2422， United States.', phone: '+1 704 839 9583', email: 'OllieTreeFoundation@gmail.com' },
+  en: { address: 'PO Box 2422, Matthews, NC 28106', phone: '+1 704-839-9583', email: 'ollietreefoundation@gmail.com' },
+} as const;
+
 export const ORG = {
-  address: 'PO Box 2422 Matthews, NC 28106-2422， United States.',
-  phone: '+1 704 839 9583',
-  email: 'OllieTreeFoundation@gmail.com',
-  youtube: 'https://www.youtube.com/channel/UCJLlawoLRMB3TEXyhAji8YQ/videos',
+  youtube:'https://www.youtube.com/channel/UCJLlawoLRMB3TEXyhAji8YQ/videos',
   logo: '/en/wp-content/uploads/sites/2/2024/06/download-1.png',
 };
 
