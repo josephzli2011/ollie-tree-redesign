@@ -1,0 +1,72 @@
+---
+import { LABELS, ORG, type Site } from '../lib/site';
+import { url } from '../lib/url';
+import menuCn from '../data/menu.cn.json';
+import menuEn from '../data/menu.en.json';
+
+interface Props { site: Site }
+const { site } = Astro.props;
+const L = LABELS[site];
+const menu = site === 'en' ? menuEn : menuCn;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container grid">
+    <div class="about">
+      <a class="brand" href={url(`/${site}/`)}>
+        <span class="mark"><img src={url(ORG.logo)} alt="" width="263" height="240" loading="lazy" /></span>
+        <span>
+          <strong>{L.name}</strong><br />
+          <span class="alt">{L.altName}</span>
+        </span>
+      </a>
+      <p class="tagline">{L.tagline}</p>
+      <a class="button button-accent" href={url(L.givingPath)}><span aria-hidden="true">♥</span> {L.donate}</a>
+    </div>
+    <div class="contact">
+      <h2>{site === 'en' ? 'Contact' : 'Contact Info 联系方式'}</h2>
+      <address>
+        <p>{ORG.address}</p>
+        <p><a href={`tel:${ORG.phone.replace(/\s/g, '')}`}>{ORG.phone}</a></p>
+        <p><a href={`mailto:${ORG.email}`}>{ORG.email}</a></p>
+        <p><a href={ORG.youtube} rel="noopener" target="_blank">YouTube</a></p>
+      </address>
+    </div>
+    <nav class="links" aria-label={site === 'en' ? 'Footer' : '页脚导航'}>
+      {menu.map((g) => (
+        <div>
+          <h2>{g.label}</h2>
+          <ul>
+            {g.children.slice(0, 6).map((i) => <li><a href={url(i.href)}>{i.label}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+  <div class="container legal">
+    <p>Copyright © {year} {L.name} · {L.altName}</p>
+    <p><a href={url(L.otherLangPath)}>{L.otherLang}</a></p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--color-olive-900); color: #e9ece6; padding-block: var(--space-8) var(--space-5); margin-top: var(--space-8); }
+  .site-footer a { color: #fff; }
+  .grid { display: grid; gap: var(--space-7); grid-template-columns: minmax(16rem, 1.1fr) minmax(14rem, 1fr) 2.4fr; }
+  .brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; font-size: 1.15rem; }
+  .mark { width: 56px; height: 50px; overflow: hidden; background: #fff; border-radius: var(--radius-md); padding: 4px; flex: none; }
+  .mark img { width: 48px; height: auto; display: block; }
+  .alt { color: #c9d3cb; font-size: 0.9rem; }
+  .tagline { color: #c9d3cb; margin: var(--space-4) 0 var(--space-5); }
+  h2 { color: #fff; font-size: var(--text-sm); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: var(--space-3); font-family: inherit; }
+  address { font-style: normal; }
+  address p { margin: 0 0 0.6em; }
+  .links { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  .links ul { list-style: none; margin: 0; padding: 0; }
+  .links li { margin-bottom: 0.45em; line-height: 1.4; }
+  .links a { text-decoration: none; color: #dfe6e0; font-size: var(--text-sm); }
+  .links a:hover { color: #fff; text-decoration: underline; }
+  .legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-3); border-top: 1px solid rgb(255 255 255 / 0.15); margin-top: var(--space-7); padding-top: var(--space-5); font-size: var(--text-sm); color: #c9d3cb; }
+  .legal p { margin: 0; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+</style>

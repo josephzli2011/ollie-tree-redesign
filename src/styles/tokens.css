@@ -1,0 +1,52 @@
+/* Design tokens. Palette comes from the OllieTree logo (teal → leaf green tree) plus warm cream and a terracotta call-to-action. */
+:root {
+  --color-olive-900: #173b2e; /* deep forest: headers, footer */
+  --color-olive-700: #24614a; /* headings, buttons */
+  --color-olive-500: #5da83f; /* logo leaf green: decoration only */
+  --color-olive-100: #e8f0e3; /* tinted bands */
+  --color-teal-700: #17607a;  /* links */
+  --color-teal-100: #e2eff3;
+  --color-cream: #fbf8f2;     /* page background */
+  --color-sand: #f2ece0;      /* alternate band */
+  --color-white: #ffffff;
+  --color-ink: #1b2420;       /* body text */
+  --color-ink-soft: #46514b;  /* secondary text */
+  --color-line: #ddd6c8;
+  --color-accent: #b5471b;    /* donate / primary CTA */
+  --color-accent-dark: #8f3612;
+  --color-focus: #1f6fd6;
+
+  --font-zh: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-en: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  --text-base: 1.125rem; /* 18px */
+  --text-sm: 1rem;
+  --text-lg: 1.3125rem;
+  --text-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --text-2xl: clamp(2rem, 1.5rem + 2vw, 2.875rem);
+  --text-3xl: clamp(2.375rem, 1.6rem + 3.4vw, 3.75rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6.5rem;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgb(23 59 46 / 0.08), 0 2px 6px rgb(23 59 46 / 0.06);
+  --shadow-md: 0 6px 24px rgb(23 59 46 / 0.12);
+
+  --container: 76rem;
+  --measure-en: 70ch;
+  --measure-zh: 40em;
+  --header-h: 76px;
+}

@@ -1,0 +1,43 @@
+---
+import { url } from '../lib/url';
+import { LABELS, type Site } from '../lib/site';
+import menuCn from '../data/menu.cn.json';
+import menuEn from '../data/menu.en.json';
+
+interface Props { title: string; site: Site; path: string; eyebrow?: string }
+const { title, site, path, eyebrow } = Astro.props;
+const menu = site === 'en' ? menuEn : menuCn;
+const group = eyebrow ?? menu.find((g) => g.children.some((c) => c.href === path))?.label;
+---
+<div class="page-header">
+  <div class="container">
+    <nav class="crumbs" aria-label={site === 'en' ? 'Breadcrumb' : '面包屑导航'}>
+      <a href={url(`/${site}/`)}>{LABELS[site].home}</a>
+      {group && <><span aria-hidden="true">/</span><span>{group}</span></>}
+    </nav>
+    <h1>{title}</h1>
+    <slot />
+  </div>
+  <svg class="leaves" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+    <g fill="currentColor">
+      <path d="M100 10c30 25 38 60 0 95-38-35-30-70 0-95z" />
+      <path d="M40 70c38 2 60 22 55 70-46-6-60-34-55-70z" opacity=".7" />
+      <path d="M160 70c-38 2-60 22-55 70 46-6 60-34 55-70z" opacity=".7" />
+      <rect x="96" y="100" width="8" height="90" rx="4" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .page-header {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, var(--color-olive-100), var(--color-teal-100));
+    padding-block: var(--space-7) var(--space-6);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .page-header h1 { font-size: var(--text-3xl); margin: var(--space-2) 0 0; max-width: 22ch; position: relative; }
+  .crumbs { display: flex; gap: 0.5rem; font-size: var(--text-sm); color: var(--color-ink-soft); position: relative; }
+  .crumbs a { color: var(--color-olive-700); }
+  .leaves { position: absolute; right: -30px; bottom: -40px; width: 260px; height: 260px; color: var(--color-olive-500); opacity: 0.16; }
+  @media (max-width: 700px) { .leaves { width: 160px; height: 160px; } }
+</style>

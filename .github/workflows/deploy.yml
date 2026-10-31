@@ -25,8 +25,8 @@ jobs:
           cache: npm
       # npm ci rejects a Windows-generated lockfile that lacks Linux-only optional deps
       - run: npm install --no-audit --no-fund
-      - run: npm test
       - run: npm run build
+      - run: npm test
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

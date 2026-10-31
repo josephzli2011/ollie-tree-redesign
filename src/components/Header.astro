@@ -1,0 +1,163 @@
+---
+import { LABELS, ORG, type Site } from '../lib/site';
+import { url } from '../lib/url';
+import menuCn from '../data/menu.cn.json';
+import menuEn from '../data/menu.en.json';
+
+interface Props { site: Site }
+const { site } = Astro.props;
+const L = LABELS[site];
+const menu = site === 'en' ? menuEn : menuCn;
+const current = decodeURI(Astro.url.pathname);
+const isCurrent = (href: string) => current === decodeURI(url(href));
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={url(`/${site}/`)}>
+      <span class="brand-mark"><img src={url(ORG.logo)} alt="" width="263" height="240" /></span>
+      <span class="brand-text">
+        <span class="brand-name">{L.name}</span>
+        <span class="brand-alt">{L.altName}</span>
+      </span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="menu-icon" aria-hidden="true"></span>
+      <span>{L.menu}</span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label={site === 'en' ? 'Main' : '主导航'}>
+      <ul class="nav-list">
+        {menu.map((group, gi) => (
+          <li class="nav-group">
+            <button class="nav-trigger" type="button" aria-expanded="false" aria-controls={`nav-${gi}`}>
+              {group.label}<span class="chev" aria-hidden="true"></span>
+            </button>
+            <ul class="nav-panel" id={`nav-${gi}`}>
+              {group.children.map((item) => (
+                <li>
+                  <a href={url(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}
+                     {...(item.href.startsWith('https://') ? { target: '_blank', rel: 'noopener' } : {})}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <div class="nav-actions">
+        <a class="lang-switch" href={url(L.otherLangPath)} lang={site === 'en' ? 'zh-CN' : 'en'}>{L.otherLang}</a>
+        <a class="button button-accent donate" data-donate href={url(L.givingPath)}>
+          <span aria-hidden="true">♥</span> {L.donate}
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('.site-header')!;
+  const toggle = header.querySelector<HTMLButtonElement>('.menu-toggle')!;
+  const triggers = [...header.querySelectorAll<HTMLButtonElement>('.nav-trigger')];
+  const closeAll = (except?: HTMLButtonElement) =>
+    triggers.forEach((t) => { if (t !== except) t.setAttribute('aria-expanded', 'false'); });
+
+  triggers.forEach((t) => t.addEventListener('click', () => {
+    const open = t.getAttribute('aria-expanded') !== 'true';
+    closeAll(t);
+    t.setAttribute('aria-expanded', String(open));
+  }));
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('nav-open', open);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const openTrigger = triggers.find((t) => t.getAttribute('aria-expanded') === 'true');
+    closeAll();
+    if (openTrigger) openTrigger.focus();
+    else if (toggle.getAttribute('aria-expanded') === 'true') { toggle.click(); toggle.focus(); }
+  });
+  document.addEventListener('click', (e) => { if (!header.contains(e.target as Node)) closeAll(); });
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgb(251 248 242 / 0.96); backdrop-filter: saturate(1.4) blur(8px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .bar { display: flex; align-items: center; gap: var(--space-5); min-height: var(--header-h); }
+  .brand { display: flex; align-items: center; gap: var(--space-3); text-decoration: none; color: var(--color-olive-900); margin-right: auto; }
+  .brand-mark { width: 50px; height: 44px; overflow: hidden; flex: none; }
+  .brand-mark img { width: 50px; height: auto; object-fit: cover; object-position: top; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-name { font-weight: 800; font-size: 1.2rem; }
+  .brand-alt { font-size: 0.85rem; color: var(--color-ink-soft); letter-spacing: 0.02em; }
+
+  .site-nav { display: flex; align-items: center; gap: var(--space-5); }
+  .nav-list { display: flex; gap: var(--space-1); list-style: none; margin: 0; padding: 0; }
+  .nav-group { position: relative; }
+  .nav-trigger {
+    display: inline-flex; align-items: center; gap: 0.4em; min-height: 44px; padding: 0.5rem 0.8rem;
+    font: inherit; font-weight: 700; color: var(--color-ink); background: none; border: 0; border-radius: var(--radius-sm); cursor: pointer;
+  }
+  .nav-trigger:hover, .nav-trigger[aria-expanded='true'] { background: var(--color-olive-100); color: var(--color-olive-900); }
+  .chev { width: 0.5em; height: 0.5em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform 0.15s; }
+  .nav-trigger[aria-expanded='true'] .chev { transform: rotate(-135deg) translateY(-2px); }
+  .nav-panel {
+    display: none; position: absolute; top: calc(100% + 6px); left: 0; min-width: 16rem; max-width: 22rem;
+    list-style: none; margin: 0; padding: var(--space-2);
+    background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  }
+  .nav-group:last-child .nav-panel { left: auto; right: 0; }
+  .nav-trigger[aria-expanded='true'] + .nav-panel, .nav-group:focus-within .nav-panel { display: block; }
+  .nav-panel a {
+    display: block; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);
+    color: var(--color-ink); text-decoration: none; line-height: 1.4;
+  }
+  .nav-panel a:hover, .nav-panel a[aria-current='page'] { background: var(--color-olive-100); color: var(--color-olive-900); }
+  .nav-panel a[aria-current='page'] { font-weight: 700; }
+  .nav-actions { display: flex; align-items: center; gap: var(--space-3); }
+  .lang-switch {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 0.8rem;
+    border: 1px solid var(--color-line); border-radius: var(--radius-pill); color: var(--color-olive-900); text-decoration: none; font-weight: 700;
+  }
+  .lang-switch:hover { background: var(--color-olive-100); }
+  .donate { min-height: 44px; padding-inline: 1.2rem; }
+
+  .menu-toggle {
+    display: none; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 0.9rem;
+    font: inherit; font-weight: 700; color: var(--color-olive-900);
+    background: var(--color-olive-100); border: 0; border-radius: var(--radius-pill); cursor: pointer;
+  }
+  .menu-icon, .menu-icon::before, .menu-icon::after { display: block; width: 18px; height: 2px; background: currentColor; border-radius: 2px; position: relative; }
+  .menu-icon::before, .menu-icon::after { content: ''; position: absolute; left: 0; }
+  .menu-icon::before { top: -6px; }
+  .menu-icon::after { top: 6px; }
+
+  @media (max-width: 1100px) {
+    .menu-toggle { display: inline-flex; }
+    .site-nav {
+      display: none; position: fixed; inset: var(--header-h) 0 0 0; z-index: 60;
+      flex-direction: column; align-items: stretch; gap: var(--space-5);
+      padding: var(--space-5) 1.25rem var(--space-7); overflow-y: auto; background: var(--color-cream);
+    }
+    :global(body.nav-open) { overflow: hidden; }
+    :global(body.nav-open) .site-nav { display: flex; }
+    .nav-list { flex-direction: column; gap: var(--space-4); }
+    .nav-trigger { width: 100%; justify-content: space-between; font-size: var(--text-lg); padding-inline: 0; pointer-events: none; }
+    .nav-trigger .chev { display: none; }
+    .nav-panel { display: block; position: static; box-shadow: none; border: 0; padding: 0; max-width: none; background: transparent; }
+    .nav-panel a { padding: 0.7rem 0.75rem; min-height: 44px; }
+    .nav-group { border-bottom: 1px solid var(--color-line); padding-bottom: var(--space-3); }
+    .nav-actions { justify-content: space-between; }
+    .donate { flex: 1; }
+  }
+  @media (max-width: 420px) {
+    .brand-alt { display: none; }
+    .menu-toggle span:last-child { display: none; }
+  }
+</style>

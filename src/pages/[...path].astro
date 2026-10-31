@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import type { Site } from '../lib/site';
+
+export async function getStaticPaths() {
+  const homes = new Set(['/', '/cn/', '/en/']);
+  const pages = await getCollection('pages', (p) => !homes.has(p.data.path) && !p.data.giving);
+  return pages.map((p) => ({
+    params: { path: p.data.path.replace(/^\/|\/$/g, '') },
+    props: { page: p.data },
+  }));
+}
+
+const { page } = Astro.props;
+const site = page.site as Site;
+---
+<BaseLayout title={page.title} lang={page.lang} site={site}>
+  <PageHeader title={page.title} site={site} path={page.path} />
+  <div class="container page-body">
+    <article class:list={['prose', { 'is-gallery': page.gallery }]} lang={page.lang} set:html={page.html} />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-body { padding-block: var(--space-7) var(--space-6); }
+</style>
