@@ -1,0 +1,85 @@
+---
+// Giving form mock-up. Payments are not wired up yet: the fund list and amounts are real, the submit step is a labelled placeholder.
+import { CONTACT, type Site } from '../lib/site';
+
+interface Props { site: Site }
+const { site } = Astro.props;
+const zh = site !== 'en';
+// Fund names exactly as the old donation form listed them.
+const FUNDS = [
+  'General Fund - 日常运营',
+  'OllieTree Health Clinic - 年度义诊',
+  'OllieTree Senior Care - 老人关怀',
+  'OllieTree 5K Run Walk - 社区健康跑步,健行',
+  'OllieTree Youth Development - 青少年发展',
+  'Medical trip to China - 中国医疗行',
+];
+const AMOUNTS = [25, 50, 100, 250];
+const T = zh
+  ? { title: '网上捐款', fund: '点击选择捐款意向', amount: '捐款金额$', other: '其他', note: 'Name/Note/姓名/昵称/电邮/留言', next: '下一步', banner: '在线捐款即将上线（占位）', bannerSub: '此表单为设计预览，暂不处理付款。现在可以通过 Zelle 或支票捐款。', zelle: 'Zelle', check: '支票捐款', thanks: '感谢您的捐助，我们代表每一位因您的爱心而受到帮助，由您的慷慨生活得到改善的人，向您说一声谢谢！' }
+  : { title: 'Give online', fund: 'Choose a fund', amount: 'Amount ($)', other: 'Other', note: 'Name / note / email', next: 'Next', banner: 'Online giving coming soon — placeholder', bannerSub: 'This form is a design preview and does not take payments yet. You can give today by Zelle or check.', zelle: 'Zelle', check: 'Check', thanks: '' };
+const C = CONTACT[site];
+---
+<section class="give">
+  <form class="give-form" aria-describedby="give-banner" onsubmit="return false">
+    <p class="banner" id="give-banner" role="note"><strong>{T.banner}</strong><span>{T.bannerSub}</span></p>
+    <h2>{T.title}</h2>
+    {T.thanks && <p class="thanks">{T.thanks}</p>}
+    <fieldset>
+      <legend>{T.fund}</legend>
+      <div class="funds">
+        {FUNDS.map((f, i) => (
+          <label class="fund"><input type="radio" name="fund" value={f} checked={i === 0} /><span>{f}</span></label>
+        ))}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>{T.amount}</legend>
+      <div class="amounts">
+        {AMOUNTS.map((a, i) => <label class="amt"><input type="radio" name="amount" value={a} checked={i === 1} /><span>${a}</span></label>)}
+        <label class="amt other"><span>{T.other}</span><input type="number" min="1" inputmode="numeric" aria-label={T.other} placeholder="$" /></label>
+      </div>
+    </fieldset>
+    <label class="note"><span>{T.note}</span><textarea rows="2"></textarea></label>
+    <button class="button button-accent submit" type="button" disabled aria-disabled="true">{T.next} →</button>
+  </form>
+  <aside class="other-ways">
+    <div class="way">
+      <h3>{T.zelle}</h3>
+      <p>{C.email}</p>
+    </div>
+    <div class="way">
+      <h3>{T.check}</h3>
+      <p>OllieTree Foundation<br />{C.address}</p>
+    </div>
+  </aside>
+</section>
+
+<style>
+  .give { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+  .give-form { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-md); }
+  .banner { display: flex; flex-direction: column; gap: 0.25rem; margin: 0 0 var(--space-5); padding: var(--space-4); border: 2px dashed var(--color-accent); border-radius: var(--radius-md); background: #fdf1ea; }
+  .banner strong { color: var(--color-accent-dark); }
+  .banner span { color: var(--color-ink-soft); font-size: var(--text-sm); }
+  h2 { font-size: var(--text-xl); }
+  .thanks { color: var(--color-ink-soft); }
+  fieldset { border: 0; padding: 0; margin: 0 0 var(--space-5); }
+  legend { font-weight: 700; margin-bottom: var(--space-3); }
+  .funds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+  .fund, .amt { position: relative; display: flex; align-items: center; gap: var(--space-2); min-height: 52px; padding: var(--space-3) var(--space-4); border: 2px solid var(--color-line); border-radius: var(--radius-md); cursor: pointer; line-height: 1.35; }
+  .fund:has(input:checked), .amt:has(input:checked) { border-color: var(--color-olive-700); background: var(--color-olive-100); }
+  .fund input, .amt input[type='radio'] { accent-color: var(--color-olive-700); width: 1.1rem; height: 1.1rem; flex: none; }
+  .amounts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .amt { font-weight: 800; font-size: var(--text-lg); }
+  .amt.other { font-weight: 700; font-size: var(--text-base); }
+  .amt.other input { width: 6rem; min-height: 40px; border: 1px solid var(--color-line); border-radius: var(--radius-sm); padding: 0 0.5rem; font: inherit; }
+  .note { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); font-weight: 700; }
+  .note textarea { font: inherit; padding: var(--space-3); border: 1px solid var(--color-line); border-radius: var(--radius-md); resize: vertical; }
+  .submit { width: 100%; opacity: 0.55; cursor: not-allowed; }
+  .submit:hover { transform: none; }
+  .other-ways { display: grid; gap: var(--space-4); }
+  .way { background: var(--color-olive-100); border-radius: var(--radius-lg); padding: var(--space-5); }
+  .way h3 { margin: 0 0 var(--space-2); font-size: var(--text-lg); }
+  .way p { margin: 0; word-break: break-word; }
+  @media (max-width: 900px) { .give { grid-template-columns: 1fr; } .funds { grid-template-columns: 1fr; } }
+</style>

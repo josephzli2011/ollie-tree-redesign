@@ -86,6 +86,11 @@ describe('replaceForms', () => {
     expect(r.html).not.toContain('<form');
   });
 
+  it('merges back-to-back forms into one placeholder', () => {
+    const r = replaceForms('<p>x</p><form class="ot_form"></form>\n<form class="ot_form"></form>', 'zh-CN');
+    expect(r.html.match(/form-placeholder/g)).toHaveLength(1);
+  });
+
   it('reports no form when there is none', () => {
     expect(replaceForms('<p>hi</p>', 'en').hasForm).toBe(false);
   });

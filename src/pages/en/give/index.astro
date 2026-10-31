@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import GivingPlaceholder from '../../../components/GivingPlaceholder.astro';
+---
+<BaseLayout title="Donate" lang="en" site="en">
+  <PageHeader title="Donate" site="en" path="/en/give/" eyebrow="Give" />
+  <div class="container" style="padding-block: var(--space-7)">
+    <GivingPlaceholder site="en" />
+  </div>
+</BaseLayout>

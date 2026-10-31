@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "scrape": "node scripts/scrape/index.mjs",
-    "import": "node scripts/import/index.mjs && node scripts/import/events.mjs",
+    "import": "node scripts/import/index.mjs && node scripts/import/events.mjs && node scripts/import/redirects.mjs",
     "verify": "node scripts/verify/parity.mjs && node scripts/verify/links.mjs"
   },
   "type": "module",

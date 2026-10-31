@@ -154,6 +154,8 @@ export function replaceForms(html, lang) {
     hasForm = true;
     $(el).replaceWith(`<div class="form-placeholder"><p>${label}</p></div>`);
   });
+  // two forms side by side become one placeholder
+  $('.form-placeholder + .form-placeholder').remove();
   return { html: $.html(), hasForm };
 }
 

@@ -3,25 +3,43 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import type { Site } from '../lib/site';
+import { url } from '../lib/url';
+import redirects from '../data/redirects.json';
 
 export async function getStaticPaths() {
   const homes = new Set(['/', '/cn/', '/en/']);
   const pages = await getCollection('pages', (p) => !homes.has(p.data.path) && !p.data.giving);
-  return pages.map((p) => ({
-    params: { path: p.data.path.replace(/^\/|\/$/g, '') },
-    props: { page: p.data },
-  }));
+  const param = (p: string) => p.replace(/^\/|\/$/g, '');
+  return [
+    ...pages.map((p) => ({ params: { path: param(p.data.path) }, props: { page: p.data, redirect: null } })),
+    // Old addresses of dropped pages (demo, duplicate, plugin pages) send visitors to the closest real page.
+    ...redirects.map((r) => ({ params: { path: param(r.from) }, props: { page: null, redirect: r.to } })),
+  ];
 }
 
-const { page } = Astro.props;
-const site = page.site as Site;
+const { page, redirect } = Astro.props;
+const target = redirect ? url(redirect) : '';
+const site = (page?.site ?? 'cn') as Site;
 ---
-<BaseLayout title={page.title} lang={page.lang} site={site}>
-  <PageHeader title={page.title} site={site} path={page.path} />
-  <div class="container page-body">
-    <article class:list={['prose', { 'is-gallery': page.gallery }]} lang={page.lang} set:html={page.html} />
-  </div>
-</BaseLayout>
+{redirect ? (
+  <html lang="zh-CN">
+    <head>
+      <meta charset="utf-8" />
+      <title>Redirecting…</title>
+      <meta http-equiv="refresh" content={`0; url=${target}`} />
+      <link rel="canonical" href={new URL(target, Astro.site).href} />
+      <meta name="robots" content="noindex" />
+    </head>
+    <body><p><a href={target}>{target}</a></p></body>
+  </html>
+) : page && (
+  <BaseLayout title={page.title} lang={page.lang} site={site}>
+    <PageHeader title={page.title} site={site} path={page.path} />
+    <div class="container page-body">
+      <article class:list={['prose', { 'is-gallery': page.gallery }]} lang={page.lang} set:html={page.html} />
+    </div>
+  </BaseLayout>
+)}
 
 <style>
   .page-body { padding-block: var(--space-7) var(--space-6); }
