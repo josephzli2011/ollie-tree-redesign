@@ -1,0 +1,27 @@
+{
+  "name": "ollie-tree-redesign",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "scrape": "node scripts/scrape/index.mjs",
+    "import": "node scripts/import/index.mjs",
+    "verify": "node scripts/verify/parity.mjs && node scripts/verify/links.mjs"
+  },
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "astro": "^7.4.4"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0",
+    "happy-dom": "^21.0.4",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

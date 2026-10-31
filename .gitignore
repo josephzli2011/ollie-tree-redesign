@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.superpowers/
+scrape/raw/**/html/
+scrape/media/
+.env
+*.log

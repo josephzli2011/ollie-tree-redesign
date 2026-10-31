@@ -1,0 +1,84 @@
+<!-- OllieTree events cards: pulls from The Events Calendar REST API. Paste into an Elementor "HTML" widget. -->
+<div id="ot-events" class="ot-events">
+  <div class="ot-head">
+    <h3 class="ot-title">近期活动 <span>Upcoming Events</span></h3>
+    <a class="ot-all" href="/cn/events/">查看全部活动 →</a>
+  </div>
+  <p class="ot-note" hidden></p>
+  <div class="ot-grid"><div class="ot-loading">加载中…</div></div>
+</div>
+<style>
+.ot-events{--ot-green:#40bf4f;--ot-dark:#2f7d39;--ot-ink:#333;font-family:inherit}
+.ot-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.ot-title{margin:0;font-size:24px;font-weight:600;color:var(--ot-ink)}
+.ot-title span{font-size:15px;font-weight:400;color:#888;margin-left:6px}
+.ot-all{color:var(--ot-green);font-size:14px;text-decoration:none;white-space:nowrap}
+.ot-all:hover{color:var(--ot-dark)}
+.ot-note{margin:0 0 12px;font-size:14px;color:#777}
+.ot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.ot-card{display:flex;flex-direction:column;background:#fff;border:1px solid #e6e6e6;border-radius:8px;overflow:hidden;text-decoration:none;color:var(--ot-ink);transition:box-shadow .2s,transform .2s}
+.ot-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.12);transform:translateY(-2px)}
+.ot-poster{position:relative;aspect-ratio:3/4;background:linear-gradient(160deg,#5fcf6c,#2f7d39);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:16px}
+.ot-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ot-poster .m{font-size:16px;letter-spacing:2px;opacity:.9}
+.ot-poster .d{font-size:64px;font-weight:700;line-height:1.1}
+.ot-poster .t{font-size:17px;font-weight:600;margin-top:10px;line-height:1.4}
+.ot-badge{position:absolute;top:10px;left:10px;background:#fff;color:var(--ot-dark);border-radius:6px;padding:4px 8px;font-size:13px;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.ot-past .ot-badge{color:#777}
+.ot-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.ot-name{font-size:16px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ot-meta{font-size:13px;color:#777;line-height:1.5}
+.ot-more{margin-top:auto;font-size:14px;color:var(--ot-green)}
+.ot-loading,.ot-empty{grid-column:1/-1;color:#888;font-size:14px;padding:20px 0}
+@media (max-width:1024px){.ot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.ot-grid{grid-template-columns:1fr;gap:12px}.ot-card{flex-direction:row}.ot-poster{width:110px;flex:none;padding:8px}.ot-poster .m{font-size:12px;letter-spacing:0}.ot-poster .d{font-size:38px}.ot-poster .t,.ot-badge{display:none}}
+</style>
+<script>
+(function(){
+  var root=document.getElementById('ot-events');
+  if(!root||root.dataset.done)return; root.dataset.done='1';
+  var API='/cn/wp-json/tribe/events/v1/events', MAX=3;
+  var grid=root.querySelector('.ot-grid'), note=root.querySelector('.ot-note');
+  var WD=['周日','周一','周二','周三','周四','周五','周六'];
+  function txt(html){var d=document.createElement('div');d.innerHTML=html||'';return (d.textContent||'').trim();}
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function when(ev){
+    var s=ev.start_date_details, dt=new Date(+s.year,+s.month-1,+s.day);
+    var str=s.year+'年'+(+s.month)+'月'+(+s.day)+'日 '+WD[dt.getDay()];
+    if(!ev.all_day)str+=' '+s.hour+':'+s.minutes;
+    return str;
+  }
+  function card(ev,past){
+    var s=ev.start_date_details, title=txt(ev.title);
+    var a=el('a','ot-card'+(past?' ot-past':'')); a.href=ev.url;
+    var p=el('div','ot-poster');
+    if(ev.image&&ev.image.url){var img=new Image();img.src=(ev.image.sizes&&ev.image.sizes.medium_large?ev.image.sizes.medium_large.url:ev.image.url);img.alt=title;img.loading='lazy';p.appendChild(img);}
+    else{p.appendChild(el('div','m',s.year+' · '+(+s.month)+'月'));p.appendChild(el('div','d',+s.day));p.appendChild(el('div','t',title));}
+    p.appendChild(el('span','ot-badge',past?'已结束':(+s.month)+'月'+(+s.day)+'日'));
+    a.appendChild(p);
+    var b=el('div','ot-body');
+    b.appendChild(el('div','ot-name',title));
+    b.appendChild(el('div','ot-meta',when(ev)));
+    if(ev.venue&&ev.venue.venue)b.appendChild(el('div','ot-meta','📍 '+txt(ev.venue.venue)));
+    b.appendChild(el('div','ot-more',past?'活动回顾 →':'详情 / 报名 →'));
+    a.appendChild(b);
+    return a;
+  }
+  function render(list,past){
+    grid.innerHTML='';
+    if(!list.length){grid.appendChild(el('div','ot-empty','暂无活动，敬请期待。'));return;}
+    list.forEach(function(ev){grid.appendChild(card(ev,past));});
+  }
+  fetch(API+'?per_page='+MAX).then(function(r){return r.json();}).then(function(j){
+    var up=(j&&j.events)||[];
+    if(up.length)return render(up,false);
+    // No upcoming events: show the most recent past ones instead
+    var today=new Date().toISOString().slice(0,10);
+    return fetch(API+'?start_date=2000-01-01&end_date='+today+'&per_page=50').then(function(r){return r.json();}).then(function(j2){
+      var past=((j2&&j2.events)||[]).slice(-MAX).reverse();
+      note.hidden=false; note.textContent='暂无即将举行的活动，以下为往期活动回顾。';
+      render(past,true);
+    });
+  }).catch(function(){grid.innerHTML='';grid.appendChild(el('div','ot-empty','活动加载失败，请点击“查看全部活动”。'));});
+})();
+</script>
