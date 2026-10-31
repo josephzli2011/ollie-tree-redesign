@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 const HOMES = { root: '/', cn: '/cn/', en: '/en/' };
 const GIVING = { root: '/cn/奉献2/', cn: '/cn/奉献2/', en: '/en/give/' };
 const DEMO_TITLES = new Set(['sample page', 'contact', 'faq', 'projects', 'services', 'about', 'home', 'home2', 'homepage']);
-const DEMO_TEXT = /example page|lorem ipsum|sample page|astra|wp-admin|this is a page/i;
+const DEMO_TEXT = /example page|lorem ipsum|sample page|astra|wp-admin|this is a page|interdum exercitation|penatibus/i;
 
 export const normalizeText = (text) => (text || '').replace(/\s+/g, ' ').trim();
 export const textHash = (text) => crypto.createHash('sha1').update(normalizeText(text)).digest('hex');
@@ -32,6 +32,9 @@ export function classifyPage(page, ctx) {
   }
 
   if (site === 'root') return redirect('/', 'root site theme demo page');
+  if (/^hello world!?$/i.test(normalizeText(title)) && /this is your first post/i.test(page.text)) {
+    return redirect(home, 'default WordPress sample post');
+  }
 
   const inMenu = ctx.menuPaths.has(path);
   if (!inMenu && DEMO_TITLES.has(normalizeText(title).toLowerCase()) && (DEMO_TEXT.test(page.text) || !normalizeText(page.text))) {

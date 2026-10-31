@@ -1,0 +1,174 @@
+[
+  {
+    "from": "/sample-page/",
+    "to": "/"
+  },
+  {
+    "from": "/contact/",
+    "to": "/"
+  },
+  {
+    "from": "/faq/",
+    "to": "/"
+  },
+  {
+    "from": "/projects/",
+    "to": "/"
+  },
+  {
+    "from": "/services/",
+    "to": "/"
+  },
+  {
+    "from": "/about/",
+    "to": "/"
+  },
+  {
+    "from": "/home/",
+    "to": "/"
+  },
+  {
+    "from": "/2020/09/04/hello-world/",
+    "to": "/"
+  },
+  {
+    "from": "/cn/社区健行backup/",
+    "to": "/cn/community-run/"
+  },
+  {
+    "from": "/cn/reset-password/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/cn/donor-dashboard/",
+    "to": "/cn/奉献2/"
+  },
+  {
+    "from": "/cn/奉献1/",
+    "to": "/cn/奉献2/"
+  },
+  {
+    "from": "/cn/donation-history/",
+    "to": "/cn/奉献2/"
+  },
+  {
+    "from": "/cn/donation-failed/",
+    "to": "/cn/奉献2/"
+  },
+  {
+    "from": "/cn/donation-confirmation/",
+    "to": "/cn/奉献2/"
+  },
+  {
+    "from": "/cn/contact/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/cn/projects/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/cn/services/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/cn/about/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/cn/2020/09/10/hello-world/",
+    "to": "/cn/"
+  },
+  {
+    "from": "/en/donor-dashboard/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/donation-failed-2/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/donation-confirmation-2/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/健康讲座/",
+    "to": "/cn/健康讲座/"
+  },
+  {
+    "from": "/en/奉献2/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/奉献1/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/事工项目/",
+    "to": "/cn/事工项目/"
+  },
+  {
+    "from": "/en/donation-history/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/donation-failed/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/donation-confirmation/",
+    "to": "/en/give/"
+  },
+  {
+    "from": "/en/sample-page-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/sample-page/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/contact-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/contact/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/faq/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/projects-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/projects/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/services-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/services/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/about-3/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/home-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/2020/09/10/hello-world-2/",
+    "to": "/en/"
+  },
+  {
+    "from": "/en/2020/09/10/hello-world/",
+    "to": "/en/"
+  }
+]

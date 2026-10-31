@@ -61,6 +61,16 @@ describe('classifyPage', () => {
     expect(classifyPage(page('cn', '/cn/', '首页'), ctx()).status).toBe('keep');
   });
 
+  it('redirects a demo-titled page filled with Astra placeholder copy', () => {
+    const r = classifyPage(page('cn', '/cn/projects/', 'Projects', '橄榄树基金会 Water Sports Interdum exercitation penatibus, praesentium facilisi'), ctx());
+    expect(r).toMatchObject({ status: 'redirect', target: '/cn/' });
+  });
+
+  it('redirects the default WordPress "Hello world!" post to the site home', () => {
+    const r = classifyPage(page('en', '/en/hello-world/', 'Hello world!', 'Welcome to WordPress. This is your first post. Edit or delete it, then start writing!'), ctx());
+    expect(r).toMatchObject({ status: 'redirect', target: '/en/' });
+  });
+
   it('keeps a demo-titled page that is linked from the menu', () => {
     expect(classifyPage(page('en', '/en/grow-together/', 'Home'), ctx()).status).toBe('keep');
   });

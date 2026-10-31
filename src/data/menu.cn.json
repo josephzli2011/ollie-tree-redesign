@@ -1,0 +1,136 @@
+[
+  {
+    "label": "关于我们",
+    "children": [
+      {
+        "label": "异象和使命",
+        "href": "/cn/异象和使命/"
+      },
+      {
+        "label": "关于我们",
+        "href": "/cn/关于我们/"
+      },
+      {
+        "label": "赞助商列表",
+        "href": "/cn/赞助商列表/"
+      },
+      {
+        "label": "联系我们",
+        "href": "/cn/联系我们/"
+      },
+      {
+        "label": "Privacy Policy 隐私协议",
+        "href": "/cn/联系我们/privacy-policy/"
+      },
+      {
+        "label": "QRcodes 常用二维码",
+        "href": "/cn/commonlyqrcodes/"
+      }
+    ]
+  },
+  {
+    "label": "事工项目",
+    "children": [
+      {
+        "label": "事工项目",
+        "href": "/cn/事工项目/"
+      },
+      {
+        "label": "社区义诊",
+        "href": "/cn/freeclinic/"
+      },
+      {
+        "label": "社区义诊注册",
+        "href": "/cn/freeclinicregister/"
+      },
+      {
+        "label": "中国医疗行",
+        "href": "/cn/中国医疗行/"
+      },
+      {
+        "label": "2022社区义诊",
+        "href": "/cn/freeclinic2022/"
+      },
+      {
+        "label": "2021社区义诊",
+        "href": "/cn/2021社区义诊/"
+      },
+      {
+        "label": "2020社区义诊",
+        "href": "/cn/2020社区义诊/"
+      },
+      {
+        "label": "2019社区义诊",
+        "href": "/cn/2019社区义诊/"
+      },
+      {
+        "label": "温馨之家",
+        "href": "/cn/温馨之家/"
+      },
+      {
+        "label": "健康讲座",
+        "href": "/cn/健康讲座/"
+      }
+    ]
+  },
+  {
+    "label": "社区健行",
+    "children": [
+      {
+        "label": "社区健行",
+        "href": "/cn/community-run/"
+      },
+      {
+        "label": "社区健行注册",
+        "href": "/cn/事工项目/community-run-社区健行注册/"
+      },
+      {
+        "label": "健康5公里，和你在一起，2023采风",
+        "href": "/cn/健康5公里和你在一起2023采风/"
+      }
+    ]
+  },
+  {
+    "label": "青少年",
+    "children": [
+      {
+        "label": "青少年义工",
+        "href": "/cn/youthvolunteers/"
+      },
+      {
+        "label": "STEM-AI",
+        "href": "/cn/youthvolunteers/stem-ai/"
+      },
+      {
+        "label": "OllieTree Youth Tutoring 橄榄树课外辅导",
+        "href": "https://docs.google.com/forms/d/e/1FAIpQLSdHNyy5MLjfhDLEk0ywFCbWyahRHI44JnlvjVen7Yo6xv129w/closedform"
+      },
+      {
+        "label": "橄榄树象棋夏令营",
+        "href": "/cn/事工项目/chesscamp/"
+      }
+    ]
+  },
+  {
+    "label": "资讯",
+    "children": [
+      {
+        "label": "橄榄树资讯",
+        "href": "/cn/橄榄树资讯/"
+      },
+      {
+        "label": "疫言堂",
+        "href": "/cn/疫情通报​/"
+      }
+    ]
+  },
+  {
+    "label": "活动",
+    "children": [
+      {
+        "label": "活动日历",
+        "href": "/cn/events/"
+      }
+    ]
+  }
+]
