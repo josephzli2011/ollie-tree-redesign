@@ -1,0 +1,137 @@
+[
+  {
+    "label": "首页",
+    "href": "https://www.ollietree.org/cn/",
+    "children": [
+      {
+        "label": "赞助商列表",
+        "href": "https://www.ollietree.org/cn/%e8%b5%9e%e5%8a%a9%e5%95%86%e5%88%97%e8%a1%a8/",
+        "children": []
+      },
+      {
+        "label": "异象和使命",
+        "href": "https://www.ollietree.org/cn/%e5%bc%82%e8%b1%a1%e5%92%8c%e4%bd%bf%e5%91%bd/",
+        "children": []
+      },
+      {
+        "label": "事工项目",
+        "href": "https://www.ollietree.org/cn/%e4%ba%8b%e5%b7%a5%e9%a1%b9%e7%9b%ae/",
+        "children": []
+      },
+      {
+        "label": "关于我们",
+        "href": "https://www.ollietree.org/cn/%e5%85%b3%e4%ba%8e%e6%88%91%e4%bb%ac/",
+        "children": []
+      },
+      {
+        "label": "联系我们",
+        "href": "https://www.ollietree.org/cn/%e8%81%94%e7%b3%bb%e6%88%91%e4%bb%ac/",
+        "children": []
+      },
+      {
+        "label": "QRcodes 常用二维码",
+        "href": "https://www.ollietree.org/cn/commonlyqrcodes/",
+        "children": []
+      },
+      {
+        "label": "Privacy Policy 隐私协议",
+        "href": "https://www.ollietree.org/cn/%e8%81%94%e7%b3%bb%e6%88%91%e4%bb%ac/privacy-policy/",
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "橄榄树资讯",
+    "href": "https://www.ollietree.org/cn/%e6%a9%84%e6%a6%84%e6%a0%91%e8%b5%84%e8%ae%af/",
+    "children": [
+      {
+        "label": "健康讲座",
+        "href": "https://www.ollietree.org/cn/%e5%81%a5%e5%ba%b7%e8%ae%b2%e5%ba%a7/",
+        "children": []
+      },
+      {
+        "label": "疫言堂",
+        "href": "http://www.ollietree.org/cn/%e7%96%ab%e6%83%85%e9%80%9a%e6%8a%a5%e2%80%8b/",
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "温馨之家",
+    "href": "https://www.ollietree.org/cn/%e6%b8%a9%e9%a6%a8%e4%b9%8b%e5%ae%b6/",
+    "children": []
+  },
+  {
+    "label": "社区健行",
+    "href": "https://www.ollietree.org/cn/community-run/",
+    "children": [
+      {
+        "label": "社区健行注册",
+        "href": "https://www.ollietree.org/cn/%e4%ba%8b%e5%b7%a5%e9%a1%b9%e7%9b%ae/community-run-%e7%a4%be%e5%8c%ba%e5%81%a5%e8%a1%8c%e6%b3%a8%e5%86%8c/",
+        "children": []
+      },
+      {
+        "label": "健康5公里，和你在一起，2023采风",
+        "href": "https://www.ollietree.org/cn/%e5%81%a5%e5%ba%b75%e5%85%ac%e9%87%8c%e5%92%8c%e4%bd%a0%e5%9c%a8%e4%b8%80%e8%b5%b72023%e9%87%87%e9%a3%8e/",
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "社区义诊",
+    "href": "https://www.ollietree.org/cn/freeclinic/",
+    "children": [
+      {
+        "label": "中国医疗行",
+        "href": "https://www.ollietree.org/cn/%e4%b8%ad%e5%9b%bd%e5%8c%bb%e7%96%97%e8%a1%8c/",
+        "children": []
+      },
+      {
+        "label": "社区义诊注册",
+        "href": "https://www.ollietree.org/cn/freeclinicregister/",
+        "children": []
+      },
+      {
+        "label": "2022社区义诊",
+        "href": "https://www.ollietree.org/cn/freeclinic2022/",
+        "children": []
+      },
+      {
+        "label": "2021社区义诊",
+        "href": "https://www.ollietree.org/cn/2021%e7%a4%be%e5%8c%ba%e4%b9%89%e8%af%8a/",
+        "children": []
+      },
+      {
+        "label": "2020社区义诊",
+        "href": "https://www.ollietree.org/cn/2020%e7%a4%be%e5%8c%ba%e4%b9%89%e8%af%8a/",
+        "children": []
+      },
+      {
+        "label": "2019社区义诊",
+        "href": "https://www.ollietree.org/cn/2019%e7%a4%be%e5%8c%ba%e4%b9%89%e8%af%8a/",
+        "children": []
+      }
+    ]
+  },
+  {
+    "label": "青少年义工",
+    "href": "https://www.ollietree.org/cn/youthvolunteers/",
+    "children": [
+      {
+        "label": "STEM-AI",
+        "href": "https://www.ollietree.org/cn/youthvolunteers/stem-ai/",
+        "children": []
+      },
+      {
+        "label": "OllieTree Youth Tutoring 橄榄树课外辅导",
+        "href": "https://docs.google.com/forms/d/e/1FAIpQLSdHNyy5MLjfhDLEk0ywFCbWyahRHI44JnlvjVen7Yo6xv129w/closedform",
+        "children": []
+      },
+      {
+        "label": "橄榄树象棋夏令营",
+        "href": "https://www.ollietree.org/cn/%e4%ba%8b%e5%b7%a5%e9%a1%b9%e7%9b%ae/chesscamp/",
+        "children": []
+      }
+    ]
+  }
+]
