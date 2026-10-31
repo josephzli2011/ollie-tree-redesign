@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import EventCalendar from '../../../components/EventCalendar.astro';
+import { getEvents } from '../../../lib/events-data';
+import { LABELS, langOf, type Site } from '../../../lib/site';
+
+export function getStaticPaths() {
+  return [{ params: { site: 'cn' } }, { params: { site: 'en' } }];
+}
+const site = Astro.params.site as Site;
+const L = LABELS[site];
+const events = await getEvents(site);
+---
+<BaseLayout title={L.events} lang={langOf(site)} site={site}>
+  <PageHeader title={L.events} site={site} path={L.eventsPath} eyebrow={site === 'en' ? 'Events' : '活动'} />
+  <div class="container" style="padding-block: var(--space-7)">
+    <EventCalendar site={site} events={events} />
+  </div>
+</BaseLayout>

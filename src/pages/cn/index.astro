@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventCards from '../../components/EventCards.astro';
 import { pageByPath, sections, load, text } from '../../lib/home';
 import { url } from '../../lib/url';
 import { LABELS } from '../../lib/site';
@@ -73,7 +74,7 @@ const projectImgs = h5$('img').toArray().map((i) => ({ src: h5$(i).attr('src')!,
         <a class="button button-ghost" href={url('/cn/事工项目/')}>{moreLabel}</a>
       </div>
       <div class="action-grid">
-        <div id="events-slot"><slot name="events" /></div>
+        <div><EventCards site="cn" /></div>
         <aside class="news-card prose" lang="zh-CN" set:html={health} />
       </div>
     </div>

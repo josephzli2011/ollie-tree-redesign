@@ -1,0 +1,101 @@
+---
+// Homepage events: up to `max` upcoming cards, or the most recent past events when none are upcoming.
+// The grouping is re-checked in the browser (events-recheck) so an old build never shows a finished event as upcoming.
+import { getEvents } from '../lib/events-data';
+import { splitEvents, formatWhen, nyDate } from '../lib/events';
+import { url } from '../lib/url';
+import { LABELS, langOf, type Site } from '../lib/site';
+
+interface Props { site: Site; max?: number }
+const { site, max = 3 } = Astro.props;
+const lang = langOf(site);
+const T = site === 'en'
+  ? { past: 'Past', pastNote: 'No upcoming events right now — here are our most recent ones.', empty: 'No events yet. Please check back soon.', more: 'Details', all: 'View all events →' }
+  : { past: '已结束', pastNote: '暂无即将举行的活动，以下为往期活动回顾。', empty: '暂无活动，敬请期待。', more: '详情 / 报名', all: '查看全部活动 →' };
+const events = await getEvents(site);
+const { upcoming, past } = splitEvents(events, new Date());
+const shown = upcoming.slice(0, 12);
+const recent = past.slice(0, max);
+const month = (iso: string) => new Intl.DateTimeFormat(site === 'en' ? 'en-US' : 'zh-CN', { timeZone: 'America/New_York', month: 'short' }).format(new Date(iso));
+const day = (iso: string) => Number(nyDate(iso).slice(8));
+---
+<div class="ev-cards" data-max={max}>
+  <div class="ev-grid" data-upcoming hidden={shown.length === 0}>
+    {shown.map((e, i) => (
+      <a class="ev-card" href={url(`/${site}/event/${e.slug}/`)} data-end={e.end} hidden={i >= max}>
+        <div class="poster">
+          {e.image ? <img src={url(e.image)} alt="" loading="lazy" /> : (
+            <div class="tile"><span class="m">{month(e.start)}</span><span class="d">{day(e.start)}</span><span class="t">{e.title}</span></div>
+          )}
+          <span class="badge">{month(e.start)} {day(e.start)}</span>
+        </div>
+        <div class="body">
+          <h3>{e.title}</h3>
+          <p class="meta">{formatWhen(e, lang)}</p>
+          {e.venue && <p class="meta">📍 {e.venue}</p>}
+          <span class="more">{T.more} →</span>
+        </div>
+      </a>
+    ))}
+  </div>
+  <div data-fallback hidden={shown.length > 0}>
+    {recent.length ? <p class="note">{T.pastNote}</p> : <p class="note">{T.empty}</p>}
+    <div class="ev-grid">
+      {recent.map((e) => (
+        <a class="ev-card is-past" href={url(`/${site}/event/${e.slug}/`)}>
+          <div class="poster">
+            {e.image ? <img src={url(e.image)} alt="" loading="lazy" /> : (
+              <div class="tile"><span class="m">{month(e.start)}</span><span class="d">{day(e.start)}</span><span class="t">{e.title}</span></div>
+            )}
+            <span class="badge">{T.past}</span>
+          </div>
+          <div class="body">
+            <h3>{e.title}</h3>
+            <p class="meta">{formatWhen(e, lang)}</p>
+            {e.venue && <p class="meta">📍 {e.venue}</p>}
+            <span class="more">{T.more} →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+  <p class="all"><a href={url(LABELS[site].eventsPath)}>{T.all}</a></p>
+</div>
+
+<script>
+  import { recheck } from '../scripts/events-recheck';
+  document.querySelectorAll<HTMLElement>('.ev-cards').forEach((root) => recheck(root, new Date()));
+</script>
+
+<style>
+  .ev-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); }
+  .ev-card {
+    display: flex; flex-direction: column; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg);
+    overflow: hidden; text-decoration: none; color: var(--color-ink); box-shadow: var(--shadow-sm); transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .ev-card[hidden], [data-upcoming][hidden], [data-fallback][hidden] { display: none; }
+  .ev-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); color: var(--color-ink); }
+  .poster { position: relative; aspect-ratio: 3 / 4; background: linear-gradient(160deg, #4f9a5c, var(--color-olive-900)); }
+  .poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tile { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; padding: var(--space-4); }
+  .tile .m { font-size: var(--text-sm); letter-spacing: 0.1em; opacity: 0.9; }
+  .tile .d { font-size: 4rem; font-weight: 800; line-height: 1.05; }
+  .tile .t { font-weight: 700; margin-top: var(--space-2); }
+  .badge { position: absolute; top: 12px; left: 12px; background: #fff; color: var(--color-olive-900); border-radius: var(--radius-sm); padding: 0.2rem 0.6rem; font-size: var(--text-sm); font-weight: 700; box-shadow: var(--shadow-sm); }
+  .is-past .badge { color: var(--color-ink-soft); }
+  .is-past .poster { filter: saturate(0.6); }
+  .body { padding: var(--space-4) var(--space-5) var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
+  .body h3 { font-size: var(--text-lg); margin: 0; }
+  .meta { margin: 0; color: var(--color-ink-soft); font-size: var(--text-sm); }
+  .more { margin-top: auto; padding-top: var(--space-2); color: var(--color-teal-700); font-weight: 700; }
+  .note { color: var(--color-ink-soft); margin: 0 0 var(--space-4); }
+  .all { margin: var(--space-5) 0 0; font-weight: 700; }
+  @media (max-width: 1000px) { .ev-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) {
+    .ev-grid { grid-template-columns: 1fr; gap: var(--space-3); }
+    .ev-card { flex-direction: row; }
+    .poster { width: 112px; flex: none; aspect-ratio: auto; min-height: 140px; }
+    .tile .d { font-size: 2.4rem; }
+    .tile .t, .badge { display: none; }
+  }
+</style>

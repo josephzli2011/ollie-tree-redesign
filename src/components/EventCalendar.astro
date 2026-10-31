@@ -1,0 +1,195 @@
+---
+// Events page body: list view (works without JS) plus a month calendar and category filter (enhanced with JS).
+import { splitEvents, formatWhen, monthGrid, nyDate, CATEGORY_LABELS } from '../lib/events';
+import type { SiteEvent } from '../lib/events-data';
+import { url } from '../lib/url';
+import { langOf, type Site } from '../lib/site';
+
+interface Props { site: Site; events: SiteEvent[] }
+const { site, events } = Astro.props;
+const lang = langOf(site);
+const zh = site !== 'en';
+const T = zh
+  ? { list: '列表', month: '月历', all: '全部', upcoming: '即将举行', past: '往期活动', none: '暂无即将举行的活动。', prev: '上个月', next: '下个月', days: ['日', '一', '二', '三', '四', '五', '六'] }
+  : { list: 'List', month: 'Month', all: 'All', upcoming: 'Upcoming', past: 'Past events', none: 'No upcoming events right now.', prev: 'Previous month', next: 'Next month', days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] };
+const now = new Date();
+const { upcoming, past } = splitEvents(events, now);
+const cats = [...new Set(events.map((e) => e.category))];
+
+// Months to show in the calendar: from the earliest event (or this month) to the latest (or 2 months ahead).
+const ym = (d: string) => d.slice(0, 7);
+const thisMonth = ym(nyDate(now.toISOString()));
+const keys = [thisMonth, ...events.flatMap((e) => [ym(nyDate(e.start)), ym(nyDate(e.end))])].sort();
+const months: string[] = [];
+for (let [y, m] = keys[0].split('-').map(Number); ; m++) {
+  if (m > 12) { m = 1; y++; }
+  const k = `${y}-${String(m).padStart(2, '0')}`;
+  months.push(k);
+  if (k >= keys[keys.length - 1] && months.length >= 3) break;
+}
+const monthName = (k: string) => new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(k + '-01T00:00:00Z'));
+const href = (e: SiteEvent) => url(`/${site}/event/${e.slug}/`);
+const dayNum = (iso: string) => Number(nyDate(iso).slice(8));
+const monShort = (iso: string) => new Intl.DateTimeFormat(zh ? 'zh-CN' : 'en-US', { timeZone: 'America/New_York', month: 'short' }).format(new Date(iso));
+---
+<div class="cal" data-cal data-current={thisMonth}>
+  <div class="toolbar" hidden data-toolbar>
+    <div class="seg" role="group" aria-label={zh ? '视图' : 'View'}>
+      <button type="button" aria-pressed="true" data-view="list">{T.list}</button>
+      <button type="button" aria-pressed="false" data-view="month">{T.month}</button>
+    </div>
+    {cats.length > 1 && (
+      <div class="chips" role="group" aria-label={zh ? '类别' : 'Category'}>
+        <button type="button" aria-pressed="true" data-cat="">{T.all}</button>
+        {cats.map((c) => <button type="button" aria-pressed="false" data-cat={c}>{CATEGORY_LABELS[lang][c]}</button>)}
+      </div>
+    )}
+  </div>
+
+  <div data-panel="list">
+    <h2>{T.upcoming}</h2>
+    {upcoming.length === 0 && <p class="empty">{T.none}</p>}
+    <ul class="rows">
+      {upcoming.map((e) => (
+        <li data-category={e.category} data-end={e.end}>
+          <a class="row-card" href={href(e)}>
+            <span class="date"><span class="mo">{monShort(e.start)}</span><span class="dy">{dayNum(e.start)}</span></span>
+            <span class="info">
+              <strong>{e.title}</strong>
+              <span class="meta">{formatWhen(e, lang)}</span>
+              {e.venue && <span class="meta">📍 {e.venue}</span>}
+            </span>
+            <span class="tag">{CATEGORY_LABELS[lang][e.category]}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    {past.length > 0 && <>
+      <h2>{T.past}</h2>
+      <ul class="rows past">
+        {past.map((e) => (
+          <li data-category={e.category}>
+            <a class="row-card" href={href(e)}>
+              <span class="date"><span class="mo">{monShort(e.start)}</span><span class="dy">{dayNum(e.start)}</span></span>
+              <span class="info">
+                <strong>{e.title}</strong>
+                <span class="meta">{formatWhen(e, lang)}</span>
+                {e.venue && <span class="meta">📍 {e.venue}</span>}
+              </span>
+              <span class="tag">{CATEGORY_LABELS[lang][e.category]}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </>}
+  </div>
+
+  <div data-panel="month" hidden>
+    {months.map((k) => {
+      const [y, m] = k.split('-').map(Number);
+      const grid = monthGrid(y, m, events);
+      return (
+        <section class="month" data-month={k} hidden={k !== thisMonth}>
+          <div class="month-head">
+            <button type="button" class="nav" data-step="-1" aria-label={T.prev}>‹</button>
+            <h2>{monthName(k)}</h2>
+            <button type="button" class="nav" data-step="1" aria-label={T.next}>›</button>
+          </div>
+          <div class="grid" role="table" aria-label={monthName(k)}>
+            <div class="dow" role="row">{T.days.map((d) => <span role="columnheader">{d}</span>)}</div>
+            {Array.from({ length: 6 }, (_, w) => (
+              <div class="week" role="row">
+                {grid.slice(w * 7, w * 7 + 7).map((c) => (
+                  <div role="cell" class:list={['day', { out: !c.inMonth, today: c.date === nyDate(now.toISOString()) }]}>
+                    <span class="n">{Number(c.date.slice(8))}</span>
+                    {c.events.map((e) => <a class="pill" data-category={e.category} href={href(e)}>{e.title}</a>)}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cal]').forEach((cal) => {
+    const toolbar = cal.querySelector<HTMLElement>('[data-toolbar]')!;
+    toolbar.hidden = false;
+    const panels = cal.querySelectorAll<HTMLElement>('[data-panel]');
+    const months = [...cal.querySelectorAll<HTMLElement>('[data-month]')];
+    // hide upcoming rows that ended after the build
+    cal.querySelectorAll<HTMLElement>('[data-end]').forEach((li) => { if (new Date(li.dataset.end!) < new Date()) li.hidden = true; });
+
+    cal.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((b) => b.addEventListener('click', () => {
+      cal.querySelectorAll('[data-view]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      panels.forEach((p) => { p.hidden = p.dataset.panel !== b.dataset.view; });
+    }));
+    cal.querySelectorAll<HTMLButtonElement>('[data-cat]').forEach((b) => b.addEventListener('click', () => {
+      cal.querySelectorAll('[data-cat]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      cal.querySelectorAll<HTMLElement>('li[data-category], .pill[data-category]').forEach((el) => {
+        el.classList.toggle('filtered', !!b.dataset.cat && el.dataset.category !== b.dataset.cat);
+      });
+    }));
+    let at = Math.max(0, months.findIndex((m) => !m.hidden));
+    const show = (i: number) => { at = Math.min(months.length - 1, Math.max(0, i)); months.forEach((m, j) => { m.hidden = j !== at; }); };
+    cal.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) => b.addEventListener('click', () => {
+      show(at + Number(b.dataset.step));
+      months[at].querySelector<HTMLButtonElement>(`[data-step="${b.dataset.step}"]`)?.focus();
+    }));
+  });
+</script>
+
+<style>
+  .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .toolbar[hidden], [data-panel][hidden], .month[hidden], li[hidden] { display: none; }
+  .seg { display: inline-flex; background: var(--color-sand); border-radius: var(--radius-pill); padding: 4px; }
+  .seg button, .chips button {
+    min-height: 44px; padding: 0 1.1rem; border: 0; border-radius: var(--radius-pill); font: inherit; font-weight: 700; cursor: pointer;
+    background: transparent; color: var(--color-ink);
+  }
+  .seg button[aria-pressed='true'] { background: #fff; color: var(--color-olive-900); box-shadow: var(--shadow-sm); }
+  .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .chips button { border: 1px solid var(--color-line); background: #fff; }
+  .chips button[aria-pressed='true'] { background: var(--color-olive-700); border-color: var(--color-olive-700); color: #fff; }
+  .filtered { display: none !important; }
+  h2 { font-size: var(--text-xl); margin: var(--space-6) 0 var(--space-4); }
+  [data-panel='list'] > h2:first-child { margin-top: 0; }
+  .empty { color: var(--color-ink-soft); }
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .row-card {
+    display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-5); align-items: center;
+    padding: var(--space-4) var(--space-5); background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg);
+    text-decoration: none; color: var(--color-ink); transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .row-card:hover { border-color: var(--color-olive-700); box-shadow: var(--shadow-sm); color: var(--color-ink); }
+  .date { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: var(--radius-md); background: var(--color-olive-100); color: var(--color-olive-900); line-height: 1.1; }
+  .mo { font-size: 0.85rem; font-weight: 700; }
+  .dy { font-size: 1.75rem; font-weight: 800; }
+  .past .date { background: var(--color-sand); color: var(--color-ink-soft); }
+  .info { display: flex; flex-direction: column; gap: 0.2rem; }
+  .info strong { font-size: var(--text-lg); }
+  .meta { color: var(--color-ink-soft); font-size: var(--text-sm); }
+  .tag { font-size: var(--text-sm); font-weight: 700; color: var(--color-olive-700); background: var(--color-olive-100); padding: 0.2rem 0.7rem; border-radius: var(--radius-pill); }
+  .month-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+  .month-head h2 { margin: 0; }
+  .nav { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--color-line); background: #fff; font-size: 1.6rem; cursor: pointer; color: var(--color-olive-900); }
+  .grid { border: 1px solid var(--color-line); border-radius: var(--radius-lg); overflow: hidden; background: #fff; }
+  .dow, .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .dow span { padding: var(--space-2); text-align: center; font-weight: 700; font-size: var(--text-sm); background: var(--color-sand); }
+  .day { min-height: 7rem; padding: var(--space-2); border-top: 1px solid var(--color-line); border-left: 1px solid var(--color-line); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .week .day:first-child { border-left: 0; }
+  .day.out { background: #faf8f4; color: #8a918c; }
+  .day.today .n { background: var(--color-accent); color: #fff; border-radius: 50%; width: 1.9rem; height: 1.9rem; display: inline-grid; place-items: center; }
+  .n { font-size: var(--text-sm); font-weight: 700; }
+  .pill { display: block; font-size: 0.85rem; line-height: 1.3; padding: 0.25rem 0.45rem; border-radius: var(--radius-sm); background: var(--color-olive-700); color: #fff; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill:hover { background: var(--color-olive-900); color: #fff; }
+  @media (max-width: 700px) {
+    .row-card { grid-template-columns: auto 1fr; }
+    .tag { grid-column: 2; justify-self: start; }
+    .day { min-height: 4.5rem; padding: 4px; }
+    .pill { font-size: 0.7rem; padding: 2px 4px; }
+  }
+</style>

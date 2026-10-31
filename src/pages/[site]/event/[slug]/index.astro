@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../../components/PageHeader.astro';
+import { getEvents, render, type SiteEvent } from '../../../../lib/events-data';
+import { formatWhen, CATEGORY_LABELS, splitEvents } from '../../../../lib/events';
+import { url } from '../../../../lib/url';
+import { LABELS, langOf, type Site } from '../../../../lib/site';
+
+export async function getStaticPaths() {
+  const all = [...(await getEvents('cn')), ...(await getEvents('en'))];
+  return all.map((e) => ({ params: { site: e.site, slug: e.slug }, props: { ev: e } }));
+}
+const { ev } = Astro.props as { ev: SiteEvent };
+const site = ev.site as Site;
+const lang = langOf(site);
+const zh = site !== 'en';
+const L = LABELS[site];
+const { Content } = await render(ev.entry);
+const isPast = splitEvents([ev], new Date()).past.length > 0;
+const T = zh
+  ? { when: '时间', where: '地点', type: '类别', ics: '加入日历', register: '报名', website: '活动网页', back: '← 返回活动日历', past: '此活动已结束', map: '查看地图' }
+  : { when: 'When', where: 'Where', type: 'Type', ics: 'Add to calendar', register: 'Register', website: 'Event page', back: '← Back to events', past: 'This event has ended', map: 'View map' };
+const place = [ev.venue, ev.address].filter(Boolean).join(', ');
+---
+<BaseLayout title={ev.title} lang={lang} site={site} description={ev.summary}>
+  <PageHeader title={ev.title} site={site} path={L.eventsPath} eyebrow={zh ? '活动' : 'Events'}>
+    {isPast && <p class="ended">{T.past}</p>}
+  </PageHeader>
+  <div class="container event">
+    <article class="prose" lang={lang}><Content /></article>
+    <aside class="details">
+      <dl>
+        <dt>{T.when}</dt><dd>{formatWhen(ev, lang)}</dd>
+        {place && <><dt>{T.where}</dt><dd>{place}<br /><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place)}`} target="_blank" rel="noopener">{T.map}</a></dd></>}
+        <dt>{T.type}</dt><dd>{CATEGORY_LABELS[lang][ev.category]}</dd>
+      </dl>
+      <div class="actions">
+        {ev.registerUrl && !isPast && <a class="button button-accent" href={url(ev.registerUrl)}>{T.register}</a>}
+        <a class="button button-primary" href={url(`/${site}/event/${ev.slug}/event.ics`)} download>📅 {T.ics}</a>
+        {ev.website && <a class="button button-ghost" href={url(ev.website)}>{T.website}</a>}
+      </div>
+      <p><a href={url(L.eventsPath)}>{T.back}</a></p>
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .event { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: var(--space-7); align-items: start; padding-block: var(--space-7); }
+  .event .prose :global(img) { max-height: 80vh; width: auto; }
+  .details { position: sticky; top: calc(var(--header-h) + 1rem); background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-sm); }
+  dl { margin: 0 0 var(--space-5); }
+  dt { font-size: var(--text-sm); font-weight: 700; color: var(--color-olive-700); text-transform: uppercase; letter-spacing: 0.06em; }
+  dd { margin: 0 0 var(--space-4); }
+  .actions { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .ended { display: inline-block; margin: var(--space-3) 0 0; padding: 0.25rem 0.8rem; border-radius: var(--radius-pill); background: var(--color-sand); font-weight: 700; color: var(--color-ink-soft); position: relative; }
+  @media (max-width: 900px) { .event { grid-template-columns: 1fr; } .details { position: static; } }
+</style>

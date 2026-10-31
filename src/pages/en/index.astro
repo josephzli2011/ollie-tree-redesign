@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventCards from '../../components/EventCards.astro';
 import { pageByPath, sections, load } from '../../lib/home';
 import { url } from '../../lib/url';
 import { LABELS } from '../../lib/site';
@@ -84,7 +85,7 @@ const donateLabel = h10('.btn').first().text().trim();
         <a class="button button-ghost" href={url(L.eventsPath)}>{L.events}</a>
       </div>
       <div class="action-grid">
-        <div id="events-slot"><slot name="events" /></div>
+        <div><EventCards site="en" /></div>
         <div class="news-stack" style="display:grid;gap:var(--space-5)">
           {news.map((n) => <aside class="news-card prose" lang="en" set:html={n} />)}
         </div>
