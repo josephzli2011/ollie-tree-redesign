@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import EventCards from '../../components/EventCards.astro';
 import { pageByPath, sections, load, text, firstImage } from '../../lib/home';
 import { url } from '../../lib/url';
-import { pic } from '../../lib/pic';
+import { pic, picHtml } from '../../lib/pic';
 import { LABELS } from '../../lib/site';
 import '../../styles/home.css';
 
@@ -78,14 +78,14 @@ const projectImgs = h5$('img').toArray().map((i) => ({ src: h5$(i).attr('src')!,
       </div>
       <div class="action-grid">
         <div><EventCards site="cn" /></div>
-        <aside class="news-card prose" lang="zh-CN" set:html={health} />
+        <aside class="news-card prose" lang="zh-CN" set:html={picHtml(health)} />
       </div>
     </div>
   </section>
 
   <section class="band band-sand">
     <div class="container prose features" lang="zh-CN">
-      {features.map((f) => <Fragment set:html={f} />)}
+      {features.map((f) => <Fragment set:html={picHtml(f, '(max-width: 980px) 100vw, 580px')} />)}
     </div>
   </section>
 

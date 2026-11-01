@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import EventCards from '../../components/EventCards.astro';
 import { pageByPath, sections, load } from '../../lib/home';
 import { url } from '../../lib/url';
-import { pic } from '../../lib/pic';
+import { pic, picHtml } from '../../lib/pic';
 import { LABELS } from '../../lib/site';
 import '../../styles/home.css';
 
@@ -88,7 +88,7 @@ const donateLabel = h10('.btn').first().text().trim();
       <div class="action-grid">
         <div><EventCards site="en" /></div>
         <div class="news-stack" style="display:grid;gap:var(--space-5)">
-          {news.map((n) => <aside class="news-card prose" lang="en" set:html={n} />)}
+          {news.map((n) => <aside class="news-card prose" lang="en" set:html={picHtml(n)} />)}
         </div>
       </div>
     </div>

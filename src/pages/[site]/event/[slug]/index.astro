@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import PageHeader from '../../../../components/PageHeader.astro';
-import { getEvents, render, type SiteEvent } from '../../../../lib/events-data';
+import { getEvents, type SiteEvent } from '../../../../lib/events-data';
+import { picHtml } from '../../../../lib/pic';
 import { formatWhen, CATEGORY_LABELS, splitEvents } from '../../../../lib/events';
 import { url } from '../../../../lib/url';
 import { LABELS, langOf, type Site } from '../../../../lib/site';
@@ -15,7 +16,6 @@ const site = ev.site as Site;
 const lang = langOf(site);
 const zh = site !== 'en';
 const L = LABELS[site];
-const { Content } = await render(ev.entry);
 const isPast = splitEvents([ev], new Date()).past.length > 0;
 const T = zh
   ? { when: '时间', where: '地点', type: '类别', ics: '加入日历', register: '报名', website: '活动网页', back: '← 返回活动日历', past: '此活动已结束', map: '查看地图' }
@@ -27,7 +27,7 @@ const place = [ev.venue, ev.address].filter(Boolean).join(', ');
     {isPast && <p class="ended">{T.past}</p>}
   </PageHeader>
   <div class="container event">
-    <article class="prose" lang={lang}><Content /></article>
+    <article class="prose" lang={lang} set:html={picHtml(ev.entry.body ?? '')} />
     <aside class="details">
       <dl>
         <dt>{T.when}</dt><dd>{formatWhen(ev, lang)}</dd>

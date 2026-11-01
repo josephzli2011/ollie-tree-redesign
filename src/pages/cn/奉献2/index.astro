@@ -3,12 +3,14 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PageHeader from '../../../components/PageHeader.astro';
 import GivingPlaceholder from '../../../components/GivingPlaceholder.astro';
 import { pageByPath, load } from '../../../lib/home';
+import { picHtml } from '../../../lib/pic';
 
 const page = await pageByPath('/cn/奉献2/');
 // The old page's own copy (Zelle, check, transparency promise) stays; its form/PayPal widgets become the mock-up above.
 const $ = load(page.html);
 $('.form-placeholder').remove();
-const body = $.html();
+$('button').remove(); // the old form's Cancel/Next buttons did nothing without the form
+const body = picHtml($.html());
 ---
 <BaseLayout title="捐款 Donation" lang="zh-CN" site="cn">
   <PageHeader title="捐款 Donation" site="cn" path="/cn/奉献2/" eyebrow="奉献" />

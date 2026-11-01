@@ -113,7 +113,8 @@ const isCurrent = (href: string) => current === decodeURI(url(href));
     background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); box-shadow: var(--shadow-md);
   }
   .nav-group:last-child .nav-panel { left: auto; right: 0; }
-  .nav-trigger[aria-expanded='true'] + .nav-panel, .nav-group:focus-within .nav-panel { display: block; }
+  /* With JS the buttons control the panels (click / Escape); without JS, keyboard focus opens them. */
+  .nav-trigger[aria-expanded='true'] + .nav-panel, :global(html:not(.js)) .nav-group:focus-within .nav-panel { display: block; }
   .nav-panel a {
     display: block; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);
     color: var(--color-ink); text-decoration: none; line-height: 1.4;
@@ -139,14 +140,20 @@ const isCurrent = (href: string) => current === decodeURI(url(href));
   .menu-icon::after { top: 6px; }
 
   @media (max-width: 1100px) {
-    .menu-toggle { display: inline-flex; }
+    /* Without JS the full menu shows below the logo; with JS it collapses behind the menu button. */
+    .bar { flex-wrap: wrap; }
     .site-nav {
-      display: none; position: fixed; inset: var(--header-h) 0 0 0; z-index: 60;
+      display: flex; flex-basis: 100%;
       flex-direction: column; align-items: stretch; gap: var(--space-5);
-      padding: var(--space-5) 1.25rem var(--space-7); overflow-y: auto; background: var(--color-cream);
+      padding: var(--space-5) 0 var(--space-7); background: var(--color-cream);
+    }
+    :global(html.js) .menu-toggle { display: inline-flex; }
+    :global(html.js) .site-nav {
+      display: none; position: fixed; inset: var(--header-h) 0 0 0; z-index: 60;
+      padding: var(--space-5) 1.25rem var(--space-7); overflow-y: auto;
     }
     :global(body.nav-open) { overflow: hidden; }
-    :global(body.nav-open) .site-nav { display: flex; }
+    :global(html.js body.nav-open) .site-nav { display: flex; }
     .nav-list { flex-direction: column; gap: var(--space-4); }
     .nav-trigger { width: 100%; justify-content: space-between; font-size: var(--text-lg); padding-inline: 0; pointer-events: none; }
     .nav-trigger .chev { display: none; }

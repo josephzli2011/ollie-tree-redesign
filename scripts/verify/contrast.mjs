@@ -27,6 +27,7 @@ const PAIRS = [
   ['primary button', '#ffffff', 'color-olive-700', 4.5],
   ['footer text', '#c9d3cb', 'color-olive-900', 7],
   ['eyebrow on cream', 'color-olive-700', 'color-cream', 4.5],
+  ['calendar out-of-month day', 'color-ink-faint', 'color-day-out', 4.5],
 ];
 
 let failed = 0;

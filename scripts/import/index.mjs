@@ -8,7 +8,7 @@ import { classifyPage, textHash, normalizeText } from './classify.mjs';
 import { cleanContent, stripElementor } from './clean.mjs';
 import { buildMenu, flattenScraped } from './menus.mjs';
 
-const BASE = '/ollie-tree-redesign';
+const BASE = ''; // content stores root-relative paths; the site base is added at render time (src/lib/base.ts)
 const SITES = ['root', 'cn', 'en'];
 const RAW = path.resolve('scrape/raw');
 const MEDIA = path.resolve('scrape/media');

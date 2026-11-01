@@ -37,7 +37,7 @@ const year = new Date().getFullYear();
         <div>
           <h2>{g.label}</h2>
           <ul>
-            {g.children.slice(0, 6).map((i) => <li><a href={url(i.href)}>{i.label}</a></li>)}
+            {g.children.map((i) => <li><a href={url(i.href)}>{i.label}</a></li>)}
           </ul>
         </div>
       ))}

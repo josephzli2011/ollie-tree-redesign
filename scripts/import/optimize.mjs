@@ -6,7 +6,7 @@ import crypto from 'node:crypto';
 import sharp from 'sharp';
 import * as cheerio from 'cheerio';
 
-const BASE = '/ollie-tree-redesign';
+const BASE = ''; // content stores root-relative paths
 const WIDTHS = [480, 960];
 const pages = fs.readdirSync('src/content/pages', { recursive: true }).map(String).filter((f) => f.endsWith('.json'))
   .map((f) => JSON.parse(fs.readFileSync(path.join('src/content/pages', f), 'utf8')));

@@ -12,6 +12,8 @@
   --color-ink: #1b2420;       /* body text */
   --color-ink-soft: #46514b;  /* secondary text */
   --color-line: #ddd6c8;
+  --color-ink-faint: #5f6862; /* de-emphasised text, still ≥ 4.5:1 */
+  --color-day-out: #f6f3ec;   /* calendar days outside the month */
   --color-accent: #b5471b;    /* donate / primary CTA */
   --color-accent-dark: #8f3612;
   --color-focus: #1f6fd6;

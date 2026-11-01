@@ -21,6 +21,17 @@ export const CATEGORY_LABELS: Record<'zh-CN' | 'en', Record<Category, string>> =
   en: { clinic: 'Clinic', run: 'Run & Walk', youth: 'Youth', talk: 'Talk', senior: 'Senior care', other: 'Other' },
 };
 
+/** Validates a hand-written event file and returns its URL slug. Throws (failing the build) on mistakes that would
+ *  otherwise show silently wrong times or broken links. */
+export function checkEvent(id: string, ev: { start: string; end: string }): string {
+  const [site, ...rest] = id.split('/');
+  if (!['cn', 'en'].includes(site) || !rest.length) throw new Error(`Event "${id}": slug must look like "cn/<name>" or "en/<name>"`);
+  for (const k of ['start', 'end'] as const) {
+    if (!/(Z|[+-]\d\d:\d\d)$/.test(ev[k])) throw new Error(`Event "${id}": ${k} "${ev[k]}" needs a time-zone offset, e.g. 2026-11-14T09:00:00-05:00`);
+  }
+  return rest.join('/');
+}
+
 const parts = (iso: string) => {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {
     timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit',

@@ -1,5 +1,18 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { splitEvents, homepageEvents, formatWhen, monthGrid, toICS, type Ev } from '../src/lib/events';
+import { splitEvents, homepageEvents, formatWhen, monthGrid, toICS, checkEvent, type Ev } from '../src/lib/events';
+
+describe('checkEvent (hand-written event files)', () => {
+  const ok = { start: '2026-11-14T09:00:00-05:00', end: '2026-11-14T13:00:00Z' };
+  it('accepts times with an offset or Z and returns the URL slug', () => {
+    expect(checkEvent('cn/2026-clinic', ok)).toBe('2026-clinic');
+  });
+  it('rejects a time without an offset (would be read as UTC on the build machine)', () => {
+    expect(() => checkEvent('cn/x', { ...ok, start: '2026-11-14T09:00:00' })).toThrow(/offset/);
+  });
+  it('rejects a slug without the site prefix', () => {
+    expect(() => checkEvent('2026-clinic', ok)).toThrow(/slug/);
+  });
+});
 
 const ev = (slug: string, start: string, end: string, extra: Partial<Ev> = {}): Ev => ({
   slug, title: slug, start, end, allDay: false, category: 'other', ...extra,

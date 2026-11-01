@@ -5,7 +5,7 @@ import path from 'node:path';
 import * as cheerio from 'cheerio';
 import { cleanContent } from './clean.mjs';
 
-const BASE = '/ollie-tree-redesign';
+const BASE = ''; // content stores root-relative paths; the site base is added at render time
 const OUT = path.resolve('src/content/events');
 const local = new Set();
 const walk = (d) => { for (const e of fss.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); e.isDirectory() ? walk(p) : local.add('/' + path.relative('public', p).split(path.sep).join('/')); } };

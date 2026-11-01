@@ -69,6 +69,32 @@ describe('built site', () => {
     expect(hrefs).toContain(`${BASE}/en/`);
   });
 
+  const css = (fs.existsSync(path.join(DIST, '_astro')) ? fs.readdirSync(path.join(DIST, '_astro')) : [])
+    .filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(path.join(DIST, '_astro', f), 'utf8')).join('\n');
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ sel: m[1], body: m[2] }));
+
+  it('opens desktop dropdowns on focus only when JavaScript is off (so Escape/click can close them)', () => {
+    const focusRules = rules.filter((r) => /nav-group[^,]*:focus-within[^,]*nav-panel/.test(r.sel));
+    expect(focusRules.length).toBeGreaterThan(0);
+    for (const r of focusRules) for (const s of r.sel.split(',').filter((x) => /focus-within/.test(x))) expect(s).toContain('html:not(.js)');
+  });
+
+  it('only hides the mobile navigation when JavaScript can open it', () => {
+    const hiding = rules.filter((r) => r.sel.split(',').some((s) => /\.site-nav(\[[^\]]*\])?\s*$/.test(s.trim())) && /display:\s*none/.test(r.body));
+    expect(hiding.length).toBeGreaterThan(0);
+    for (const r of hiding) expect(r.sel).toContain('html.js');
+  });
+
+  it('lists every menu link in the footer (the no-JS fallback)', () => {
+    const menu = JSON.parse(fs.readFileSync('src/data/menu.cn.json', 'utf8'));
+    const count = menu.reduce((n: number, g: any) => n + g.children.length, 0);
+    expect(load('/cn/index.html')('footer nav a').length).toBe(count);
+  });
+
+  it('leaves no dead buttons from the old donation form on the cn giving page', () => {
+    expect(load(`/cn/奉献2/index.html`)('.giving-copy button').length).toBe(0);
+  });
+
   it('never references ollietree.org images', () => {
     for (const f of htmlFiles) {
       const $ = load(f);

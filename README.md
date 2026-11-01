@@ -49,7 +49,7 @@ npm run verify    # content parity + link check
 
 ### Move to the real domain
 
-In `astro.config.mjs` set `site: 'https://www.ollietree.org'` and `base: '/'`, and set `BASE` to `''` in `scripts/import/*.mjs` before re-importing. Every old URL keeps working: kept pages live at their original paths, media at `/{cn,en}/wp-content/uploads/...`, and dropped pages redirect (meta-refresh pages, plus `public/_redirects` for Netlify or Cloudflare Pages).
+In `astro.config.mjs` set `site: 'https://www.ollietree.org'` and `base: '/'`, then rebuild. Content stores root-relative paths and the base is added at render time, so no re-import is needed. (Also update `BASE` in `scripts/verify/links.mjs` and `tests/build-output.test.ts`.) Every old URL keeps working: kept pages live at their original paths, media at `/{cn,en}/wp-content/uploads/...`, and dropped pages redirect (meta-refresh pages, plus `public/_redirects` for Netlify or Cloudflare Pages).
 
 ## Not finished on purpose
 
