@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import type { Site } from '../lib/site';
 import { url } from '../lib/url';
+import { picHtml, GALLERY_SIZES } from '../lib/pic';
 import redirects from '../data/redirects.json';
 
 export async function getStaticPaths() {
@@ -36,7 +37,7 @@ const site = (page?.site ?? 'cn') as Site;
   <BaseLayout title={page.title} lang={page.lang} site={site}>
     <PageHeader title={page.title} site={site} path={page.path} />
     <div class="container page-body">
-      <article class:list={['prose', { 'is-gallery': page.gallery }]} lang={page.lang} set:html={page.html} />
+      <article class:list={['prose', { 'is-gallery': page.gallery }]} lang={page.lang} set:html={picHtml(page.html, page.gallery ? GALLERY_SIZES : undefined)} />
     </div>
   </BaseLayout>
 )}

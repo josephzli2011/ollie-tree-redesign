@@ -15,7 +15,8 @@ interface Props {
 const { title, lang, site, description } = Astro.props;
 const labelSite: Site = site === 'en' ? 'en' : 'cn';
 const L = LABELS[labelSite];
-const fullTitle = title && title !== L.name ? `${title} | ${L.name}` : `${L.name} | ${L.altName}`;
+const FONTS = 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap';
+const fullTitle =title && title !== L.name ? `${title} | ${L.name}` : `${L.name} | ${L.altName}`;
 ---
 <!doctype html>
 <html lang={lang}>
@@ -27,7 +28,9 @@ const fullTitle = title && title !== L.name ? `${title} | ${L.name}` : `${L.name
     <link rel="icon" href={url(ORG.logo)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" />
+    <link rel="preload" as="style" href={FONTS} />
+    <link rel="stylesheet" href={FONTS} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={FONTS} /></noscript>
     <slot name="head" />
   </head>
   <body>
@@ -51,16 +54,20 @@ const fullTitle = title && title !== L.name ? `${title} | ${L.name}` : `${L.name
       let at = 0;
       const show = (i: number) => {
         at = (i + imgs.length) % imgs.length;
-        big.src = imgs[at].currentSrc || imgs[at].src;
+        big.src = imgs[at].dataset.full || imgs[at].currentSrc || imgs[at].src;
         big.alt = imgs[at].alt;
       };
+      const zoomLabel = document.documentElement.lang === 'en' ? 'View larger image' : '查看大图';
       imgs.forEach((img, i) => {
+        // wrap each image in a real button so it is keyboard- and screen-reader-operable
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'zoom';
+        btn.setAttribute('aria-label', img.alt ? `${zoomLabel}: ${img.alt}` : zoomLabel);
+        img.replaceWith(btn);
+        btn.append(img);
         img.dataset.zoom = '';
-        img.tabIndex = 0;
-        img.setAttribute('role', 'button');
-        const open = () => { show(i); dialog.showModal(); };
-        img.addEventListener('click', open);
-        img.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+        btn.addEventListener('click', () => { show(i); dialog.showModal(); });
       });
       dialog.querySelector('.lightbox-close')!.addEventListener('click', () => dialog.close());
       dialog.querySelector('.lightbox-prev')!.addEventListener('click', () => show(at - 1));

@@ -220,8 +220,13 @@ export function cleanContent(html, { site, base, localMedia }) {
   const $ = load(out);
   const imgs = $('img').toArray();
   const firstSrc = imgs.length ? $(imgs[0]).attr('src') : null;
+  // the first image may be above the fold; everything after it loads as the visitor scrolls
+  imgs.forEach((img, i) => {
+    if (i === 0) $(img).removeAttr('loading');
+    else $(img).attr('loading', 'lazy').attr('decoding', 'async');
+  });
   return {
-    html: out,
+    html: $.html(),
     hasForm: forms.hasForm,
     gallery: imgs.length >= 6 && visibleText(out).length < 300,
     hero: firstSrc ? decodeURI(firstSrc.slice(base.length)) : undefined,

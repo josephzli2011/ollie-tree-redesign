@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import EventCards from '../../components/EventCards.astro';
 import { pageByPath, sections, load } from '../../lib/home';
 import { url } from '../../lib/url';
+import { pic } from '../../lib/pic';
 import { LABELS } from '../../lib/site';
 import '../../styles/home.css';
 
@@ -55,7 +56,7 @@ const donateLabel = h10('.btn').first().text().trim();
         </div>
       </div>
       <div class="hero-media">
-        {heroArt && <img class="art" src={heroArt} alt="" />}
+        {heroArt && <img class="art" {...pic(heroArt)} sizes="(max-width: 980px) 90vw, 560px" alt="" fetchpriority="high" />}
       </div>
     </div>
   </section>
@@ -66,7 +67,7 @@ const donateLabel = h10('.btn').first().text().trim();
       <div class="program-grid">
         {programs.map((p) => (
           <a class="program-card" href={url(p.href)}>
-            <div class="pic">{p.img && <img src={p.img} alt="" loading="lazy" />}</div>
+            <div class="pic">{p.img && <img {...pic(p.img)} sizes="(max-width: 560px) 90vw, 280px" alt="" loading="lazy" />}</div>
             <div class="body">
               <h3>{p.name}</h3>
               <p>{p.body}</p>
@@ -97,7 +98,7 @@ const donateLabel = h10('.btn').first().text().trim();
     <div class="container">
       <div class="section-head" style="justify-content:center;text-align:center"><h2>{sponsorsTitle}</h2></div>
       <div class="sponsors">
-        {sponsorImgs.map((s) => <img src={s} alt="" loading="lazy" />)}
+        {sponsorImgs.map((s) => <img {...pic(s)} sizes="180px" alt="" loading="lazy" />)}
       </div>
     </div>
   </section>

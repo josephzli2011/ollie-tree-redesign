@@ -121,4 +121,4 @@ These files are listed in the WordPress media library but return 404 on ollietre
 
 ## Known differences
 
-Text that the parity check reports as missing from the new site, with the reason. (Filled in by the verification step.)
+See `docs/known-differences.md`.

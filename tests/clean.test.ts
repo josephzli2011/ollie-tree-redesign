@@ -105,6 +105,15 @@ describe('cleanContent', () => {
     expect(r.hero).toBe('/cn/wp-content/uploads/a0.jpg');
   });
 
+  it('lazy-loads every image except the first', () => {
+    const local = new Set(['/cn/wp-content/uploads/a.jpg', '/cn/wp-content/uploads/b.jpg']);
+    const r = cleanContent('<img src="https://www.ollietree.org/cn/wp-content/uploads/a.jpg"><img src="https://www.ollietree.org/cn/wp-content/uploads/b.jpg">', { site: 'cn', base: BASE, localMedia: local });
+    const $ = cheerio.load(r.html);
+    expect($('img').eq(0).attr('loading')).toBeUndefined();
+    expect($('img').eq(1).attr('loading')).toBe('lazy');
+    expect($('img').eq(1).attr('decoding')).toBe('async');
+  });
+
   it('does not flag a text page as a gallery', () => {
     const r = cleanContent(`<p>${'长文本'.repeat(200)}</p><img src="https://www.ollietree.org/cn/wp-content/uploads/a.jpg">`, { site: 'cn', base: BASE, localMedia: new Set(['/cn/wp-content/uploads/a.jpg']) });
     expect(r.gallery).toBe(false);

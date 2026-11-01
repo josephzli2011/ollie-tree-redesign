@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EventCards from '../../components/EventCards.astro';
-import { pageByPath, sections, load, text } from '../../lib/home';
+import { pageByPath, sections, load, text, firstImage } from '../../lib/home';
 import { url } from '../../lib/url';
+import { pic } from '../../lib/pic';
 import { LABELS } from '../../lib/site';
 import '../../styles/home.css';
 
@@ -12,6 +13,8 @@ const vision = await pageByPath('/cn/异象和使命/');
 const about = await pageByPath('/cn/关于我们/');
 const clinic = await pageByPath('/cn/freeclinic/');
 const S = sections(home.html);
+const heroA = firstImage(about.html);
+const heroB = firstImage(clinic.html);
 
 // [0] hero
 const h0 = load(S[0]);
@@ -61,8 +64,8 @@ const projectImgs = h5$('img').toArray().map((i) => ({ src: h5$(i).attr('src')!,
         </div>
       </div>
       <div class="hero-media" aria-hidden="true">
-        {about.hero && <img class="photo-a" src={url(about.hero)} alt="" />}
-        {clinic.hero && <img class="photo-b" src={url(clinic.hero)} alt="" />}
+        {heroA && <img class="photo-a" {...pic(heroA.src)} sizes="(max-width: 980px) 90vw, 560px" alt="" fetchpriority="high" />}
+        {heroB && <img class="photo-b" {...pic(heroB.src)} sizes="(max-width: 980px) 45vw, 280px" alt="" />}
       </div>
     </div>
   </section>
@@ -109,7 +112,7 @@ const projectImgs = h5$('img').toArray().map((i) => ({ src: h5$(i).attr('src')!,
         <a class="button button-primary" href={url('/cn/事工项目/')}>{projectsBtn}</a>
       </div>
       <div class="photo-strip prose">
-        {projectImgs.map((i) => <img src={i.src} alt={i.alt} loading="lazy" />)}
+        {projectImgs.map((i) => <img {...pic(i.src)} sizes="(max-width: 560px) 45vw, 240px" alt={i.alt} loading="lazy" />)}
       </div>
     </div>
   </section>

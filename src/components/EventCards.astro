@@ -4,6 +4,7 @@
 import { getEvents } from '../lib/events-data';
 import { splitEvents, formatWhen, nyDate } from '../lib/events';
 import { url } from '../lib/url';
+import { pic } from '../lib/pic';
 import { LABELS, langOf, type Site } from '../lib/site';
 
 interface Props { site: Site; max?: number }
@@ -24,7 +25,7 @@ const day = (iso: string) => Number(nyDate(iso).slice(8));
     {shown.map((e, i) => (
       <a class="ev-card" href={url(`/${site}/event/${e.slug}/`)} data-end={e.end} hidden={i >= max}>
         <div class="poster">
-          {e.image ? <img src={url(e.image)} alt="" loading="lazy" /> : (
+          {e.image ? <img {...pic(e.image)} sizes="(max-width: 600px) 112px, 300px" alt="" loading="lazy" /> : (
             <div class="tile"><span class="m">{month(e.start)}</span><span class="d">{day(e.start)}</span><span class="t">{e.title}</span></div>
           )}
           <span class="badge">{month(e.start)} {day(e.start)}</span>
@@ -44,7 +45,7 @@ const day = (iso: string) => Number(nyDate(iso).slice(8));
       {recent.map((e) => (
         <a class="ev-card is-past" href={url(`/${site}/event/${e.slug}/`)}>
           <div class="poster">
-            {e.image ? <img src={url(e.image)} alt="" loading="lazy" /> : (
+            {e.image ? <img {...pic(e.image)} sizes="(max-width: 600px) 112px, 300px" alt="" loading="lazy" /> : (
               <div class="tile"><span class="m">{month(e.start)}</span><span class="d">{day(e.start)}</span><span class="t">{e.title}</span></div>
             )}
             <span class="badge">{T.past}</span>

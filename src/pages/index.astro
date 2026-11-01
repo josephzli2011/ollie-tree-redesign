@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { pageByPath, load } from '../lib/home';
 import { url } from '../lib/url';
+import { pic } from '../lib/pic';
 import { LABELS, ORG } from '../lib/site';
 import '../styles/home.css';
 
@@ -17,7 +18,7 @@ const sites = [
 <BaseLayout title="" lang="zh-CN" site="root">
   <section class="chooser">
     <div class="photos" aria-hidden="true">
-      {photos.map((p) => <img src={p} alt="" />)}
+      {photos.map((p) => <img {...pic(p)} sizes="20vw" alt="" />)}
     </div>
     <div class="panel">
       <img class="logo" src={url(ORG.logo)} alt="OllieTree Foundation 橄榄树基金会" width="263" height="240" />

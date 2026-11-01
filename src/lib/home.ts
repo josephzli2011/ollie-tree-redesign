@@ -12,6 +12,12 @@ export function sections(html: string): string[] {
 
 export const text = (html: string, sel: string) => load(html)(sel).first().text().replace(/\s+/g, ' ').trim();
 
+/** src/srcset of the first image in some imported HTML (srcset lists the WordPress size variants we downloaded). */
+export function firstImage(html: string): { src: string; srcset?: string } | null {
+  const img = load(html)('img').first();
+  return img.length ? { src: img.attr('src')!, srcset: img.attr('srcset') } : null;
+}
+
 export async function pageByPath(path: string) {
   const [p] = await getCollection('pages', (x) => x.data.path === path);
   if (!p) throw new Error(`No imported page at ${path}`);

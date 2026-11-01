@@ -32,6 +32,9 @@
 .prose.is-gallery .block { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); }
 .prose.is-gallery .block > :is(p, h1, h2, h3, h4, ul, ol, div:not(.gallery)) { grid-column: 1 / -1; }
 .prose img[data-zoom] { cursor: zoom-in; }
+.prose button.zoom { all: unset; display: block; cursor: zoom-in; border-radius: var(--radius-md); }
+.prose button.zoom:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+.prose .gallery button.zoom, .prose.is-gallery .block button.zoom { width: 100%; }
 
 /* Buttons from the old site */
 .prose .btn {
