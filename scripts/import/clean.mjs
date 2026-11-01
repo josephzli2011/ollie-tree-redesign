@@ -1,6 +1,6 @@
 // Turns Elementor/WordPress page HTML into clean, semantic HTML for the new site.
 import * as cheerio from 'cheerio';
-import { pathFromLink, isOllieTree } from '../lib/paths.mjs';
+import { pathFromLink, isOllieTree, originalCandidates } from '../lib/paths.mjs';
 
 const KEEP_CLASSES = new Set(['row', 'col', 'block', 'gallery', 'btn', 'video', 'map', 'form-placeholder', 'counter', 'counter-num', 'counter-label', 'notice', 'accordion']);
 const KEEP_ATTRS = new Set(['href', 'src', 'srcset', 'sizes', 'alt', 'title', 'width', 'height', 'target', 'rel', 'colspan', 'rowspan', 'allowfullscreen', 'allow', 'loading', 'controls', 'poster', 'open', 'datetime', 'start', 'type', 'frameborder']);
@@ -169,14 +169,13 @@ export function rewriteMedia(html, base, localMedia) {
   $('img').each((_, el) => {
     const e = $(el);
     const src = e.attr('data-src') || e.attr('data-lazy-src') || e.attr('src');
-    let mapped = map(src);
-    if (mapped === null) {
-      // fall back to the unsized original when a sized variant is missing
-      const original = src.replace(/-\d+x\d+(?=\.[a-z]+$)/i, '').replace(/-scaled(?=\.[a-z]+$)/i, '');
-      mapped = map(original);
-    }
-    if (mapped === null) return void e.remove();
-    e.attr('src', mapped);
+    // use the largest version we have: true original, then -scaled, then the size WordPress put in the page
+    const best = isOllieTree(src) && isUploads(src)
+      ? [...originalCandidates(src)].reverse().map(map).find((m) => m) ?? map(src)
+      : map(src);
+    if (best === null) return void e.remove();
+    if (best !== map(src)) { e.removeAttr('srcset'); e.removeAttr('sizes'); e.removeAttr('width'); e.removeAttr('height'); }
+    e.attr('src', best);
     const srcset = e.attr('srcset');
     if (srcset) {
       const kept = srcset.split(',').map((s) => s.trim()).filter(Boolean).map((entry) => {

@@ -14,6 +14,20 @@ export function pathFromLink(link) {
   return p;
 }
 
+/**
+ * Larger versions WordPress may hold for an uploaded file: "b-300x200.jpg" was cut from "b.jpg";
+ * "b-scaled.jpg" is a 2560px copy of the full-size "b.jpg". Ordered from the next size up to the true original.
+ */
+export function originalCandidates(url) {
+  const out = [];
+  let u = url;
+  const sized = /-\d+x\d+(?=\.[a-z0-9]+$)/i;
+  const scaled = /-scaled(?=\.[a-z0-9]+$)/i;
+  if (sized.test(u)) { u = u.replace(sized, ''); out.push(u); }
+  if (scaled.test(u)) out.push(u.replace(scaled, ''));
+  return out;
+}
+
 /** True when the URL points at ollietree.org (any scheme, with or without www). */
 export function isOllieTree(link) {
   try {

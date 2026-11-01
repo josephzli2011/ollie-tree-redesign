@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'vitest';
-import { pathFromLink } from '../scripts/lib/paths.mjs';
+import { pathFromLink, originalCandidates } from '../scripts/lib/paths.mjs';
+
+describe('originalCandidates', () => {
+  it('derives the full-size original and the unscaled original of a WordPress size variant', () => {
+    expect(originalCandidates('https://www.ollietree.org/cn/wp-content/uploads/a/b-1024x768.jpg')).toEqual([
+      'https://www.ollietree.org/cn/wp-content/uploads/a/b.jpg',
+    ]);
+    expect(originalCandidates('https://www.ollietree.org/cn/wp-content/uploads/a/b-scaled.jpg')).toEqual([
+      'https://www.ollietree.org/cn/wp-content/uploads/a/b.jpg',
+    ]);
+    expect(originalCandidates('https://www.ollietree.org/cn/wp-content/uploads/a/b-scaled-300x200.jpg')).toEqual([
+      'https://www.ollietree.org/cn/wp-content/uploads/a/b-scaled.jpg',
+      'https://www.ollietree.org/cn/wp-content/uploads/a/b.jpg',
+    ]);
+  });
+
+  it('returns nothing for a file that is already an original', () => {
+    expect(originalCandidates('https://www.ollietree.org/cn/wp-content/uploads/a/b.jpg')).toEqual([]);
+  });
+});
 
 describe('pathFromLink', () => {
   it('decodes percent-encoded Chinese slugs', () => {

@@ -20,7 +20,7 @@
 
   --font-zh: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Source Han Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
   --font-en: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif; /* built-in serifs: no download */
 
   --text-base: 1.125rem; /* 18px */
   --text-sm: 1rem;

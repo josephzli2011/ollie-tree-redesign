@@ -31,6 +31,16 @@ describe('rewriteMedia', () => {
     expect(out).toContain('src="/ollie-tree-redesign/cn/wp-content/uploads/sites/3/2026/04/4467.jpg"');
   });
 
+  it('uses the full-resolution original instead of a WordPress thumbnail when we have it', () => {
+    const out = rewriteMedia('<img src="https://www.ollietree.org/cn/wp-content/uploads/sites/3/2026/04/4467-300x200.jpg">', BASE, local);
+    expect(out).toContain('src="/ollie-tree-redesign/cn/wp-content/uploads/sites/3/2026/04/4467.jpg"');
+  });
+
+  it('prefers the unscaled original over a -scaled copy', () => {
+    const l = new Set(['/cn/wp-content/uploads/b-scaled.jpg', '/cn/wp-content/uploads/b.jpg']);
+    expect(rewriteMedia('<img src="https://www.ollietree.org/cn/wp-content/uploads/b-scaled.jpg">', BASE, l)).toContain('src="/ollie-tree-redesign/cn/wp-content/uploads/b.jpg"');
+  });
+
   it('drops srcset entries with no local file', () => {
     const out = rewriteMedia(
       '<img src="https://www.ollietree.org/cn/wp-content/uploads/sites/3/2026/04/4467.jpg" srcset="https://www.ollietree.org/cn/wp-content/uploads/sites/3/2026/04/4467-300x200.jpg 300w, https://www.ollietree.org/cn/wp-content/uploads/sites/3/2026/04/4467-1024x683.jpg 1024w">',

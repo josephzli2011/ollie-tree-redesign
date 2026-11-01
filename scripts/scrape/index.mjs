@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import * as cheerio from 'cheerio';
 import { fetchAll, fetchText, download, pool, fetchWithRetry } from './wp.mjs';
-import { ORIGIN, pathFromLink, isOllieTree } from '../lib/paths.mjs';
+import { ORIGIN, pathFromLink, isOllieTree, originalCandidates } from '../lib/paths.mjs';
 
 const ROOT = path.resolve('scrape');
 const SITES = [
@@ -84,6 +84,11 @@ async function scrapeSite(site) {
     return [u, await download(u, path.join(ROOT, 'media', rel))];
   });
   const missing = results.filter(([, r]) => r === 'missing').map(([u]) => u);
+  // Also fetch the full-resolution originals behind size variants and "-scaled" copies, so pages can show them sharp.
+  // These are best-effort: WordPress doesn't keep every original, so a 404 here is not a missing file.
+  const originals = [...new Set(list.flatMap(originalCandidates))].filter((u) => !urls.has(u));
+  const got = await pool(originals, 4, async (u) => download(u, path.join(ROOT, 'media', pathFromLink(u).replace(/^\//, ''))));
+  console.log(`${site.key}: ${got.filter((r) => r === 'saved').length} full-resolution originals fetched, ${got.filter((r) => r === 'skipped').length} already here`);
   await writeJson(path.join(dir, 'media-missing.json'), missing);
   console.log(`${site.key}: ${pages.length} pages, ${posts.length} posts, ${events.length} events, ${media.length} media items, ${list.length} files (${missing.length} missing)`);
 }
